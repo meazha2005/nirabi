@@ -82,13 +82,18 @@ export async function POST(req: NextRequest) {
       const fullTranscript = [...history, { role: 'user', content: message }, { role: 'assistant', content: turnResult.reply }];
       const baseTime = Date.now();
 
-      for (let idx = 0; idx < fullTranscript.length; idx++) {
-        const msg = fullTranscript[idx];
-        const msgId = uuidv4();
-        const timeOffset = new Date(baseTime + (idx * 1000));
+      if (fullTranscript.length > 0) {
+        const placeholders = fullTranscript.map(() => "(?, ?, ?, ?, ?, ?)").join(", ");
+        const insertParams: any[] = [];
+        for (let idx = 0; idx < fullTranscript.length; idx++) {
+          const msg = fullTranscript[idx];
+          const msgId = uuidv4();
+          const timeOffset = new Date(baseTime + (idx * 1000));
+          insertParams.push(msgId, convo.id, msg.role, msg.content, idx + 1, timeOffset);
+        }
         await query(
-          `INSERT INTO ${msgsTable} (id, conversation_id, role, content, seq, created_at) VALUES (?, ?, ?, ?, ?, ?)`,
-          [msgId, convo.id, msg.role, msg.content, idx + 1, timeOffset]
+          `INSERT INTO ${msgsTable} (id, conversation_id, role, content, seq, created_at) VALUES ${placeholders}`,
+          insertParams
         );
       }
 

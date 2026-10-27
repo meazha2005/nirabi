@@ -14,21 +14,22 @@ export default function SmoothScrollProvider({ children }: { children: React.Rea
     const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (prefersReduced) return;
 
-    // Detect mobile touch devices for tuned inertia
+    // Detect mobile touch devices (phones and tablets)
+    // Mobile phones natively run 120Hz/60Hz hardware compositor scrolling.
+    // Bypassing touch virtualization on phones eliminates all input latency, lag, and touch stuttering.
     const isTouch = window.matchMedia("(pointer: coarse)").matches || "ontouchstart" in window;
+    if (isTouch) {
+      return;
+    }
 
     const lenis = new Lenis({
-      duration: isTouch ? 0.95 : 1.2,
+      duration: 1.1,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: "vertical",
       gestureOrientation: "vertical",
       smoothWheel: true,
       wheelMultiplier: 1,
-      // Buttery smooth touch physics on phone screens:
-      syncTouch: true,
-      syncTouchLerp: 0.09,
-      touchMultiplier: 1.25,
-      touchInertiaExponent: 1.75,
+      syncTouch: false,
       infinite: false,
     });
 
@@ -37,7 +38,7 @@ export default function SmoothScrollProvider({ children }: { children: React.Rea
     // Connect Lenis scroll events to GSAP ScrollTrigger
     lenis.on("scroll", ScrollTrigger.update);
 
-    // Direct native display-refresh RAF loop (60Hz / 90Hz / 120Hz ProMotion on phones)
+    // Direct native display-refresh RAF loop for desktop
     let rafId: number;
     function update(time: number) {
       lenis.raf(time);

@@ -9,11 +9,10 @@ export const siteConfig = {
     { label: "Home", href: "/" },
     { label: "About", href: "/about" },
     { label: "Services", href: "/services" },
-    { label: "Projects", href: "/projects" },
     { label: "Contact", href: "/contact" },
   ],
   primaryCta: "Get Free Quote",
-  secondaryCta: "View Our Work",
+  secondaryCta: "Our Services",
   contact: {
     phone: "9543117399",
     phoneDisplay: "+91 95431 17399",

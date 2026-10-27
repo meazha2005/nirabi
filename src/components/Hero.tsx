@@ -50,33 +50,11 @@ export default function Hero() {
             </Link>
 
             <Link
-              href="/projects"
+              href="/services"
               className="group inline-flex items-center gap-2.5 border border-white/20 bg-[#141413]/70 px-7 py-3.5 text-xs font-semibold uppercase tracking-[0.14em] text-ivory backdrop-blur-sm transition-all hover:border-gold hover:text-gold"
             >
               <span>{siteConfig.secondaryCta}</span>
             </Link>
-          </div>
-        </div>
-      </div>
-
-      {/* Bottom Architectural Telemetry Strip */}
-      <div className="relative z-10 border-t border-white/10 bg-[#0A0A09]/90 backdrop-blur-md">
-        <div className="mx-auto grid max-w-7xl grid-cols-2 divide-x divide-white/10 sm:grid-cols-4">
-          <div className="px-6 py-4">
-            <span className="font-mono text-[10px] text-gold/80 block uppercase tracking-wider">Services</span>
-            <span className="text-xs font-medium text-ivory block mt-0.5">Villas, Flats &amp; Offices</span>
-          </div>
-          <div className="px-6 py-4">
-            <span className="font-mono text-[10px] text-gold/80 block uppercase tracking-wider">Execution</span>
-            <span className="text-xs font-medium text-ivory block mt-0.5">Complete Turnkey Solutions</span>
-          </div>
-          <div className="px-6 py-4">
-            <span className="font-mono text-[10px] text-gold/80 block uppercase tracking-wider">Materials</span>
-            <span className="text-xs font-medium text-ivory block mt-0.5">Premium Teak, Marble &amp; Ply</span>
-          </div>
-          <div className="px-6 py-4">
-            <span className="font-mono text-[10px] text-gold/80 block uppercase tracking-wider">Location</span>
-            <span className="text-xs font-medium text-ivory block mt-0.5">Madipakkam, Chennai</span>
           </div>
         </div>
       </div>

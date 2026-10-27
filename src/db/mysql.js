@@ -4,12 +4,10 @@ const fs = require('fs');
 
 const TABLE_PREFIX = process.env.DB_TABLE_PREFIX || 'nbs_';
 
-let pool = null;
-let sqliteDb = null;
-let useSQLite = false;
-
-function initPool() {
-  if (pool || sqliteDb) return;
+function getPool() {
+  if (globalThis.__nirabi_mysql_pool) {
+    return globalThis.__nirabi_mysql_pool;
+  }
 
   const dbHost = process.env.DB_HOST || '192.169.147.255';
   const dbUser = process.env.DB_USER || 'MEAZHA';
@@ -17,110 +15,64 @@ function initPool() {
   const dbName = process.env.DB_NAME || 'le_test';
   const dbPort = parseInt(process.env.DB_PORT || '3306', 10);
 
-  if (dbHost && dbUser && dbName) {
+  const sslOption = (process.env.DB_SSL === 'true' || process.env.DB_SSL === '1')
+    ? { rejectUnauthorized: false }
+    : undefined;
+
+  const pool = mysql.createPool({
+    host: dbHost,
+    port: dbPort,
+    user: dbUser,
+    password: dbPassword || '',
+    database: dbName,
+    waitForConnections: true,
+    connectionLimit: 4,
+    maxIdle: 2,
+    idleTimeout: 30000,
+    queueLimit: 0,
+    connectTimeout: 15000,
+    enableKeepAlive: true,
+    keepAliveInitialDelay: 10000,
+    ssl: sslOption,
+  });
+
+  globalThis.__nirabi_mysql_pool = pool;
+  return pool;
+}
+
+function getSQLiteDb() {
+  if (globalThis.__nirabi_sqlite_db) {
+    return globalThis.__nirabi_sqlite_db;
+  }
+
+  const sqlite3 = require('sqlite3').verbose();
+  const dataDir = process.env.VERCEL ? '/tmp' : path.join(process.cwd(), 'data');
+  if (!fs.existsSync(dataDir)) {
     try {
-      const sslOption = (process.env.DB_SSL === 'true' || process.env.DB_SSL === '1')
-        ? { rejectUnauthorized: false }
-        : undefined;
-
-      pool = mysql.createPool({
-        host: dbHost,
-        port: dbPort,
-        user: dbUser,
-        password: dbPassword || '',
-        database: dbName,
-        waitForConnections: true,
-        connectionLimit: 10,
-        queueLimit: 0,
-        connectTimeout: 12000,
-        ssl: sslOption,
-      });
-      console.log(`[Database] Initialized MySQL pool for "${dbName}" with table prefix "${TABLE_PREFIX}"`);
-    } catch (err) {
-      console.warn(`[Database] MySQL pool creation failed: ${err.message}. Falling back to SQLite...`);
-      initSQLite();
+      fs.mkdirSync(dataDir, { recursive: true });
+    } catch {
+      /* directory exists */
     }
-  } else {
-    console.log(`[Database] MySQL credentials incomplete. Initializing SQLite...`);
-    initSQLite();
   }
+  const dbPath = path.join(dataDir, 'local_dev.sqlite');
+  const db = new sqlite3.Database(dbPath);
+
+  // Initialize SQLite schema and seed admin user ONCE so login never fails
+  initSQLiteSchema(db);
+
+  globalThis.__nirabi_sqlite_db = db;
+  return db;
 }
 
-function initSQLite() {
-  try {
-    const sqlite3 = require('sqlite3').verbose();
-    useSQLite = true;
-    const dataDir = process.env.VERCEL ? '/tmp' : path.join(process.cwd(), 'data');
-    if (!fs.existsSync(dataDir)) {
-      try {
-        fs.mkdirSync(dataDir, { recursive: true });
-      } catch {
-        /* directory exists */
-      }
-    }
-    const dbPath = path.join(dataDir, 'local_dev.sqlite');
-    sqliteDb = new sqlite3.Database(dbPath);
-    console.log(`[Database] Connected to SQLite database at "${dbPath}" with table prefix "${TABLE_PREFIX}"`);
-  } catch (e) {
-    console.error(`[Database] SQLite fallback initialization error:`, e.message);
-  }
-}
-
-async function query(sql, params = []) {
-  initPool();
-
-  if (useSQLite && sqliteDb) {
-    const cleanSql = sql
-      .replace(/ENGINE\s*=\s*\w+/gi, '')
-      .replace(/DEFAULT\s+CHARSET\s*=\s*\w+/gi, '');
-
-    return new Promise((resolve, reject) => {
-      const trimmed = cleanSql.trim().toUpperCase();
-      if (trimmed.startsWith('SELECT') || trimmed.startsWith('SHOW')) {
-        sqliteDb.all(cleanSql, params, (err, rows) => {
-          if (err) return reject(err);
-          resolve(rows || []);
-        });
-      } else {
-        sqliteDb.run(cleanSql, params, function (err) {
-          if (err) return reject(err);
-          resolve({ insertId: this ? this.lastID : 0, affectedRows: this ? this.changes : 0 });
-        });
-      }
-    });
-  }
-
-  if (!pool) {
-    throw new Error('Database pool could not be initialized.');
-  }
-
-  try {
-    const [rows] = await pool.query(sql, params);
-    return rows;
-  } catch (err) {
-    if ((err.code === 'ECONNREFUSED' || err.code === 'ETIMEDOUT' || err.code === 'ER_ACCESS_DENIED_ERROR') && !useSQLite) {
-      console.warn(`[Database] MySQL connection error (${err.code}). Switching to SQLite database...`);
-      initSQLite();
-      if (useSQLite && sqliteDb) {
-        return query(sql, params);
-      }
-    }
-    throw err;
-  }
-}
-
-async function initTables() {
-  initPool();
-
+function initSQLiteSchema(db) {
   const usersTable = `${TABLE_PREFIX}users`;
   const leadsTable = `${TABLE_PREFIX}leads`;
   const convsTable = `${TABLE_PREFIX}conversations`;
   const msgsTable = `${TABLE_PREFIX}messages`;
-  const projTable = `${TABLE_PREFIX}projects`;
   const servTable = `${TABLE_PREFIX}services`;
 
-  if (useSQLite && sqliteDb) {
-    await query(`
+  db.serialize(() => {
+    db.run(`
       CREATE TABLE IF NOT EXISTS ${usersTable} (
         id TEXT PRIMARY KEY,
         name TEXT NOT NULL,
@@ -131,7 +83,19 @@ async function initTables() {
       );
     `);
 
-    await query(`
+    // Insert default admin user if not exists
+    db.run(`
+      INSERT OR IGNORE INTO ${usersTable} (id, name, email, hashed_password, role)
+      VALUES (
+        'admin-nirabi-studio-seed-01',
+        'NIRABI Admin',
+        'admin@nirabi.studio',
+        '$2a$10$k21gwiIh3CP9RzdmBzX6m.KSBfgNy5.HDX49qy/ruNhjAKUokOE8m',
+        'admin'
+      );
+    `);
+
+    db.run(`
       CREATE TABLE IF NOT EXISTS ${leadsTable} (
         id TEXT PRIMARY KEY,
         name TEXT,
@@ -155,51 +119,29 @@ async function initTables() {
       );
     `);
 
-    await query(`
+    db.run(`
       CREATE TABLE IF NOT EXISTS ${convsTable} (
         id TEXT PRIMARY KEY,
         lead_id TEXT,
         session_id TEXT UNIQUE NOT NULL,
         summary TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY(lead_id) REFERENCES ${leadsTable}(id) ON DELETE CASCADE
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
       );
     `);
 
-    await query(`
+    db.run(`
       CREATE TABLE IF NOT EXISTS ${msgsTable} (
         id TEXT PRIMARY KEY,
         conversation_id TEXT NOT NULL,
         role TEXT NOT NULL,
         content TEXT NOT NULL,
         seq INTEGER DEFAULT 0,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY(conversation_id) REFERENCES ${convsTable}(id) ON DELETE CASCADE
-      );
-    `);
-
-    await query(`
-      CREATE TABLE IF NOT EXISTS ${projTable} (
-        id TEXT PRIMARY KEY,
-        slug TEXT UNIQUE NOT NULL,
-        title TEXT NOT NULL,
-        location TEXT,
-        category TEXT,
-        size_sqft TEXT,
-        year TEXT,
-        hero_image TEXT,
-        gallery TEXT,
-        concept TEXT,
-        materials TEXT,
-        design_approach TEXT,
-        challenges TEXT,
-        result TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
       );
     `);
 
-    await query(`
+    db.run(`
       CREATE TABLE IF NOT EXISTS ${servTable} (
         id TEXT PRIMARY KEY,
         slug TEXT UNIQUE NOT NULL,
@@ -209,6 +151,71 @@ async function initTables() {
         order_index INTEGER DEFAULT 0
       );
     `);
+  });
+}
+
+function querySQLite(sql, params = []) {
+  const db = getSQLiteDb();
+  const cleanSql = sql
+    .replace(/ENGINE\s*=\s*\w+/gi, '')
+    .replace(/DEFAULT\s+CHARSET\s*=\s*\w+/gi, '');
+
+  return new Promise((resolve, reject) => {
+    const trimmed = cleanSql.trim().toUpperCase();
+    if (trimmed.startsWith('SELECT') || trimmed.startsWith('SHOW') || trimmed.startsWith('PRAGMA')) {
+      db.all(cleanSql, params, (err, rows) => {
+        if (err) return reject(err);
+        resolve(rows || []);
+      });
+    } else {
+      db.run(cleanSql, params, function (err) {
+        if (err) return reject(err);
+        resolve({ insertId: this ? this.lastID : 0, affectedRows: this ? this.changes : 0 });
+      });
+    }
+  });
+}
+
+async function query(sql, params = []) {
+  // If fallback to SQLite was previously triggered
+  if (globalThis.__nirabi_use_sqlite) {
+    return querySQLite(sql, params);
+  }
+
+  const pool = getPool();
+
+  try {
+    const [rows] = await pool.query(sql, params);
+    return rows;
+  } catch (err) {
+    if (
+      err.code === 'ECONNREFUSED' ||
+      err.code === 'ETIMEDOUT' ||
+      err.code === 'ER_ACCESS_DENIED_ERROR' ||
+      err.code === 'EHOSTUNREACH' ||
+      err.code === 'EACCES' ||
+      err.code === 'ENOTFOUND' ||
+      err.code === 'ECONNRESET'
+    ) {
+      console.warn(`[Database] MySQL connection error (${err.code}). Switching to SQLite fallback...`);
+      globalThis.__nirabi_use_sqlite = true;
+      return querySQLite(sql, params);
+    }
+    throw err;
+  }
+}
+
+// initTables is only used when explicitly running "npm run db:seed"
+async function initTables() {
+  const usersTable = `${TABLE_PREFIX}users`;
+  const leadsTable = `${TABLE_PREFIX}leads`;
+  const convsTable = `${TABLE_PREFIX}conversations`;
+  const msgsTable = `${TABLE_PREFIX}messages`;
+  const servTable = `${TABLE_PREFIX}services`;
+
+  if (globalThis.__nirabi_use_sqlite) {
+    const db = getSQLiteDb();
+    initSQLiteSchema(db);
   } else {
     // MySQL CREATE TABLE statements
     await query(`
@@ -267,26 +274,6 @@ async function initTables() {
         seq INT DEFAULT 0,
         created_at DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3),
         FOREIGN KEY (conversation_id) REFERENCES ${convsTable}(id) ON DELETE CASCADE
-      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-    `);
-
-    await query(`
-      CREATE TABLE IF NOT EXISTS ${projTable} (
-        id VARCHAR(36) PRIMARY KEY,
-        slug VARCHAR(160) UNIQUE NOT NULL,
-        title VARCHAR(255) NOT NULL,
-        location VARCHAR(120),
-        category VARCHAR(80),
-        size_sqft VARCHAR(80),
-        year VARCHAR(20),
-        hero_image VARCHAR(255),
-        gallery TEXT,
-        concept TEXT,
-        materials TEXT,
-        design_approach TEXT,
-        challenges TEXT,
-        result TEXT,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
     `);
 

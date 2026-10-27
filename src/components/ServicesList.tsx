@@ -1,149 +1,185 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
-import { ArrowUpRight, CheckCircle2, Clock, ShieldCheck } from "lucide-react";
-import { services } from "@/data/services";
+import {
+  ArrowUpRight,
+  CheckCircle2,
+  Clock,
+  ShieldCheck,
+  Sparkles,
+  Layers,
+  PhoneCall,
+  MessageCircle,
+  Hammer,
+  BadgeCheck
+} from "lucide-react";
+import { services, Service } from "@/data/services";
+import { siteConfig } from "@/data/siteConfig";
+
+const CATEGORIES = [
+  { id: "all", label: "All Services" },
+  { id: "residential", label: "Villas & Homes" },
+  { id: "kitchen", label: "Modular Kitchens" },
+  { id: "commercial", label: "Offices & Retail" },
+  { id: "renovation", label: "Renovation & Furniture" },
+] as const;
+
+type CategoryId = (typeof CATEGORIES)[number]["id"];
 
 export default function ServicesList() {
-  const [activeId, setActiveId] = useState<string>(services[0]?.id || "villa-architecture");
-  const activeService = services.find((s) => s.id === activeId) || services[0];
+  const [activeCategory, setActiveCategory] = useState<CategoryId>("all");
+
+  const filteredServices = useMemo(() => {
+    if (activeCategory === "all") return services;
+    if (activeCategory === "residential") {
+      return services.filter((s) => s.id === "villa-architecture" || s.id === "luxury-residences" || s.id === "turnkey-contracts");
+    }
+    if (activeCategory === "kitchen") {
+      return services.filter((s) => s.id === "bespoke-culinary-suites");
+    }
+    if (activeCategory === "commercial") {
+      return services.filter((s) => s.id === "corporate-workspaces" || s.id === "boutique-commercial");
+    }
+    if (activeCategory === "renovation") {
+      return services.filter((s) => s.id === "apartment-transformations" || s.id === "custom-furniture-millwork");
+    }
+    return services;
+  }, [activeCategory]);
+
+  const handleInquire = (serviceTitle: string) => {
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(
+        new CustomEvent("nirabi:open-chat", {
+          detail: { context: { service_interest: serviceTitle } },
+        })
+      );
+    }
+  };
 
   return (
-    <section className="relative border-b border-white/10 bg-[#080808] py-20 lg:py-28">
-      <div className="mx-auto max-w-7xl px-6 lg:px-10">
-        <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
-
-          {/* Left Column: Interactive Capabilities Directory */}
-          <div className="lg:col-span-6">
-            <span className="font-mono text-[11px] uppercase tracking-[0.25em] text-gold font-semibold">
-              Our Capabilities
-            </span>
-            <h2 className="mt-2 font-display text-3xl text-ivory sm:text-4xl">
-              Interior Design &amp; Build
-            </h2>
-
-            <div className="mt-8 divide-y divide-white/10 border-y border-white/10">
-              {services.map((service, i) => {
-                const isSelected = service.id === activeId;
-                return (
-                  <div key={service.id} className="group">
-                    <button
-                      onClick={() => setActiveId(service.id)}
-                      className={`flex w-full items-center justify-between py-5 text-left transition-colors focus:outline-none ${
-                        isSelected ? "text-gold" : "text-ivory hover:text-gold"
-                      }`}
-                    >
-                      <div className="flex items-baseline gap-4">
-                        <span className="font-mono text-xs text-gold/70">
-                          0{i + 1}
-                        </span>
-                        <span className="font-display text-xl sm:text-2xl">
-                          {service.title}
-                        </span>
-                      </div>
-                      <ArrowUpRight
-                        size={18}
-                        className={`transition-transform duration-300 ${
-                          isSelected ? "rotate-45 text-gold" : "text-ivory/30 group-hover:text-gold"
-                        }`}
-                      />
-                    </button>
-
-                    {/* Mobile Expansion Drawer */}
-                    {isSelected && (
-                      <div className="pb-6 pt-2 lg:hidden space-y-4">
-                        <p className="text-xs leading-relaxed text-ivory/70">
-                          {service.description}
-                        </p>
-                        <div className="relative aspect-[16/10] w-full overflow-hidden rounded-sm border border-white/10">
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
-                            src={service.image}
-                            alt={service.title}
-                            loading="lazy"
-                            decoding="async"
-                            className="h-full w-full object-cover"
-                          />
-                        </div>
-                        <div className="space-y-1.5 text-[11px] text-ivory/70 border-t border-white/10 pt-3">
-                          <div className="flex items-center gap-2"><Clock size={12} className="text-gold" /> <span>{service.timeline}</span></div>
-                          <div className="flex items-center gap-2"><ShieldCheck size={12} className="text-gold" /> <span>{service.scope}</span></div>
-                        </div>
-                        <Link
-                          href="/contact"
-                          className="inline-flex items-center gap-2 border border-gold bg-gold px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-near-black hover:bg-gold-light"
-                        >
-                          <span>Get Quote for {service.title}</span>
-                          <ArrowUpRight size={13} />
-                        </Link>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
+    <div className="bg-[#080808] text-ivory">
+      {/* Category Filter Pills */}
+      <section className="sticky top-20 z-30 border-b border-white/10 bg-[#080808]/95 backdrop-blur-md py-4">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 lg:px-10">
+          <div className="flex flex-wrap items-center gap-2">
+            {CATEGORIES.map((cat) => {
+              const active = activeCategory === cat.id;
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => setActiveCategory(cat.id)}
+                  className={`rounded-full px-4 py-2 text-xs font-medium tracking-wide transition-all ${
+                    active
+                      ? "bg-gold text-near-black shadow-md font-semibold"
+                      : "bg-[#141414] text-ivory/70 border border-white/10 hover:border-gold/40 hover:text-ivory"
+                  }`}
+                >
+                  {cat.label}
+                </button>
+              );
+            })}
           </div>
 
-          {/* Right Column: Desktop Service Preview */}
-          <div className="hidden lg:col-span-6 lg:block">
-            <div className="sticky top-28 border border-white/10 bg-[#0C0C0B] p-8">
-              <div className="relative aspect-[16/10] w-full overflow-hidden border border-white/10 bg-[#141413]">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={activeService.image}
-                  alt={activeService.title}
-                  loading="lazy"
-                  decoding="async"
-                  className="h-full w-full object-cover transition-all duration-500"
-                />
-                <div className="absolute top-3 left-3 bg-[#080808]/85 px-3 py-1 font-mono text-[10px] uppercase tracking-wider text-gold border border-white/10">
-                  {activeService.timeline}
-                </div>
-              </div>
+          <span className="hidden sm:inline-block font-mono text-xs text-gold/80">
+            Showing {filteredServices.length} of {services.length} Services
+          </span>
+        </div>
+      </section>
 
-              <div className="mt-6">
-                <span className="font-mono text-[10px] uppercase tracking-wider text-gold font-medium">
-                  {activeService.scope}
-                </span>
-                <h3 className="mt-1 font-display text-2xl text-ivory">
-                  {activeService.title}
-                </h3>
-                <p className="mt-3 text-xs leading-relaxed text-ivory/70">
-                  {activeService.description}
-                </p>
+      {/* Main Services Card Grid */}
+      <section className="py-16 lg:py-24">
+        <div className="mx-auto max-w-7xl px-6 lg:px-10">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-2">
+            {filteredServices.map((service, index) => (
+              <div
+                key={service.id}
+                className="group flex flex-col justify-between overflow-hidden rounded-md border border-white/10 bg-[#0E0E0E] transition-all duration-300 hover:border-gold/40 hover:bg-[#121212] hover:shadow-[0_8px_30px_rgba(0,0,0,0.5)]"
+              >
+                {/* Visual Header */}
+                <div>
+                  <div className="relative aspect-[16/10] w-full overflow-hidden bg-[#181818]">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={service.image}
+                      alt={service.title}
+                      loading="lazy"
+                      decoding="async"
+                      className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0E0E0E] via-transparent to-transparent opacity-80" />
 
-                <div className="mt-6 border-t border-white/10 pt-6">
-                  <span className="font-mono text-[10px] uppercase tracking-wider text-ivory/50 block font-medium">What We Deliver</span>
-                  <div className="mt-3 grid grid-cols-2 gap-2 text-xs text-ivory/80">
-                    {activeService.deliverables?.map((del, dIdx) => (
-                      <span key={dIdx} className="flex items-center gap-2">
-                        <CheckCircle2 size={13} className="text-gold shrink-0" />
-                        <span className="truncate">{del}</span>
+                    {/* Service Index & Scope Badges */}
+                    <div className="absolute top-4 left-4 flex items-center gap-2">
+                      <span className="rounded bg-[#080808]/90 px-2.5 py-1 font-mono text-xs font-bold text-gold border border-white/15">
+                        0{index + 1}
                       </span>
-                    )) || (
-                      <>
-                        <span className="flex items-center gap-2"><CheckCircle2 size={13} className="text-gold" /> 3D Walkthroughs</span>
-                        <span className="flex items-center gap-2"><CheckCircle2 size={13} className="text-gold" /> Full Electrical &amp; Lighting Plans</span>
-                      </>
-                    )}
+                      <span className="rounded bg-[#080808]/90 px-3 py-1 font-mono text-[11px] text-ivory/80 border border-white/15">
+                        {service.scope}
+                      </span>
+                    </div>
+
+                    <div className="absolute top-4 right-4">
+                      <span className="inline-flex items-center gap-1.5 rounded bg-gold/90 px-2.5 py-1 text-[11px] font-semibold text-near-black">
+                        <Clock size={11} />
+                        {service.timeline}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Body Content */}
+                  <div className="p-6 sm:p-8">
+                    <h2 className="text-2xl font-bold tracking-tight text-ivory group-hover:text-gold transition-colors">
+                      {service.title}
+                    </h2>
+                    <p className="mt-1.5 text-xs font-medium text-gold/90">
+                      {service.tagline}
+                    </p>
+                    <p className="mt-4 text-xs leading-relaxed text-ivory/70">
+                      {service.description}
+                    </p>
+
+                    {/* Deliverables Checklist */}
+                    <div className="mt-6 rounded-sm border border-white/5 bg-[#141414] p-4">
+                      <span className="block font-mono text-[10px] uppercase tracking-wider text-ivory/50">
+                        What We Deliver:
+                      </span>
+                      <div className="mt-2.5 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                        {service.deliverables.map((item, dIdx) => (
+                          <div key={dIdx} className="flex items-center gap-2 text-xs text-ivory/85">
+                            <CheckCircle2 size={13} className="text-gold shrink-0" />
+                            <span className="truncate">{item}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                <div className="mt-8">
-                  <Link
-                    href="/contact"
-                    className="inline-flex items-center gap-2 border border-gold bg-gold px-6 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-near-black transition-colors hover:bg-gold-light"
+                {/* Card Action Footer */}
+                <div className="flex items-center justify-between border-t border-white/10 bg-[#0A0A0A] px-6 py-4 sm:px-8">
+                  <button
+                    onClick={() => handleInquire(service.title)}
+                    className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-gold hover:text-gold-light transition-colors"
                   >
-                    <span>Get a Quote for This Service</span>
-                    <ArrowUpRight size={14} />
+                    <span>Instant Quote</span>
+                    <Sparkles size={13} />
+                  </button>
+
+                  <Link
+                    href={`/contact?service=${encodeURIComponent(service.title)}`}
+                    className="inline-flex items-center gap-1.5 rounded bg-white/10 px-4 py-2 text-xs font-semibold text-ivory hover:bg-gold hover:text-near-black transition-all"
+                  >
+                    <span>Book Site Visit</span>
+                    <ArrowUpRight size={13} />
                   </Link>
                 </div>
               </div>
-            </div>
+            ))}
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+    </div>
   );
 }
