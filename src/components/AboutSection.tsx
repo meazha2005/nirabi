@@ -1,88 +1,67 @@
-import MaskReveal from "@/components/animations/MaskReveal";
-import TextReveal from "@/components/animations/TextReveal";
-import { Compass, Sparkles, CheckCircle2, ShieldCheck, Award } from "lucide-react";
-
 export default function AboutSection() {
   return (
-    <section className="relative overflow-hidden py-24 lg:py-32 bg-[#0A0A0A]">
-      <div className="relative mx-auto max-w-7xl px-6 lg:px-10">
-        
-        {/* Main Grid: Manifesto & Philosophy */}
-        <div className="grid gap-12 lg:grid-cols-2 lg:gap-20 items-center">
-          <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-gold/30 bg-gold/5 px-3.5 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-gold mb-4">
-              <Compass size={13} />
-              <span>Studio Heritage & Philosophy</span>
-            </div>
-            <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl text-ivory tracking-tight leading-[1.15]">
-              Design led by material honesty and everyday living.
+    <section className="relative border-b border-white/10 bg-[#080808] py-20 lg:py-28">
+      <div className="mx-auto max-w-7xl px-6 lg:px-10">
+        {/* Two-Column Section */}
+        <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
+          <div className="lg:col-span-5">
+            <span className="font-mono text-[11px] uppercase tracking-[0.25em] text-gold font-semibold">
+              About Our Studio
+            </span>
+            <h2 className="mt-4 font-display text-3xl leading-snug text-ivory sm:text-4xl lg:text-5xl">
+              Quality interiors built with honest craftsmanship.
             </h2>
-            <p className="mt-6 text-base text-ivory/75 leading-relaxed font-light">
-              Founded in Chennai, NIRABI DESIGN STUDIO is an architectural and luxury interior atelier crafting residential and executive sanctuaries. We reject transient ornament in pursuit of timeless spatial proportion.
-            </p>
-            <p className="mt-4 text-sm text-ivory/65 leading-relaxed">
-              Every commission begins with an understanding of human rhythm: how morning light falls across natural stone, the quiet acoustics of private suites, and the tactile warmth of hand-finished timber joinery.
-            </p>
-
-            {/* 4 Architectural Pillars */}
-            <div className="mt-8 grid grid-cols-2 gap-4 border-t border-white/10 pt-6">
-              <div className="flex items-start gap-2.5">
-                <CheckCircle2 size={16} className="text-gold shrink-0 mt-0.5" />
-                <div>
-                  <div className="font-display text-sm font-semibold text-ivory">Spatial Purity</div>
-                  <div className="text-[11px] text-ivory/50">Uncluttered geometric balance</div>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-2.5">
-                <CheckCircle2 size={16} className="text-gold shrink-0 mt-0.5" />
-                <div>
-                  <div className="font-display text-sm font-semibold text-ivory">Material Honesty</div>
-                  <div className="text-[11px] text-ivory/50">Noble stone & certified timber</div>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-2.5">
-                <CheckCircle2 size={16} className="text-gold shrink-0 mt-0.5" />
-                <div>
-                  <div className="font-display text-sm font-semibold text-ivory">Turnkey Delivery</div>
-                  <div className="text-[11px] text-ivory/50">Single-point studio governance</div>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-2.5">
-                <CheckCircle2 size={16} className="text-gold shrink-0 mt-0.5" />
-                <div>
-                  <div className="font-display text-sm font-semibold text-ivory">10-Year Warranty</div>
-                  <div className="text-[11px] text-ivory/50">Hardware & finish endurance</div>
-                </div>
-              </div>
+            <div className="mt-6 border-l border-gold/40 pl-4">
+              <p className="font-display text-base italic text-gold/90">
+                &ldquo;We don&rsquo;t just decorate rooms. We build practical, beautiful homes where families love to live.&rdquo;
+              </p>
             </div>
           </div>
 
-          {/* Right Visual Image */}
-          <div className="relative">
-            <div className="overflow-hidden rounded-3xl border border-white/10 shadow-2xl">
-              <MaskReveal
-                src="/images/about/studio-detail.jpg"
-                alt="Architectural detail from a NIRABI DESIGN STUDIO project"
-                className="aspect-[4/3] w-full"
-              />
-            </div>
-            
-            {/* Floating Telemetry Box */}
-            <div className="absolute -bottom-6 -left-6 rounded-2xl border border-gold/40 bg-[#121212]/95 p-5 shadow-2xl backdrop-blur-md hidden sm:block max-w-[240px]">
-              <div className="flex items-center gap-2 text-gold">
-                <Award size={18} />
-                <span className="font-mono text-xs font-bold uppercase tracking-wider">Turnkey Standard</span>
+          <div className="space-y-6 text-sm leading-relaxed text-ivory/80 lg:col-span-7">
+            <p>
+              NIRABI DESIGN STUDIO is an interior design and turnkey construction company based in Madipakkam, Chennai. We design and build complete interiors for independent villas, residential flats, duplexes, and commercial spaces across Chennai.
+            </p>
+            <p>
+              We believe that good home interior should be practical, long-lasting, and stress-free. We listen to what you need, design floor layouts with plenty of walking space and natural light, and show you photorealistic 3D views so you can visualize everything clearly before execution starts.
+            </p>
+            <p>
+              Instead of outsourcing to unpredictable local subcontractors, NIRABI works with our own experienced carpenters, stone masons, false ceiling technicians, and painters. We take single-point responsibility for quality, schedule, and clean site handover.
+            </p>
+
+            {/* Studio Metrics Matrix */}
+            <div className="mt-8 grid grid-cols-2 gap-px bg-white/10 sm:grid-cols-4">
+              <div className="bg-[#0C0C0B] p-4 text-center">
+                <span className="font-display text-2xl font-bold text-gold">120+</span>
+                <span className="mt-1 block font-mono text-[10px] uppercase tracking-wider text-ivory/60">Homes Built</span>
               </div>
-              <p className="mt-1 text-xs text-ivory/70">
-                120+ Commissions crafted across Chennai with 100% on-time milestone delivery.
-              </p>
+              <div className="bg-[#0C0C0B] p-4 text-center">
+                <span className="font-display text-2xl font-bold text-gold">150k+</span>
+                <span className="mt-1 block font-mono text-[10px] uppercase tracking-wider text-ivory/60">Sq. Ft. Completed</span>
+              </div>
+              <div className="bg-[#0C0C0B] p-4 text-center">
+                <span className="font-display text-2xl font-bold text-gold">100%</span>
+                <span className="mt-1 block font-mono text-[10px] uppercase tracking-wider text-ivory/60">Turnkey Delivery</span>
+              </div>
+              <div className="bg-[#0C0C0B] p-4 text-center">
+                <span className="font-display text-2xl font-bold text-gold">Chennai</span>
+                <span className="mt-1 block font-mono text-[10px] uppercase tracking-wider text-ivory/60">Madipakkam Studio</span>
+              </div>
             </div>
           </div>
         </div>
 
+        {/* Studio Image Frame */}
+        <div className="mt-16 overflow-hidden rounded-sm border border-white/10 bg-[#121211]">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/generated/service_turnkey.jpg"
+            alt="NIRABI DESIGN STUDIO carpentry and turnkey execution"
+            loading="lazy"
+            decoding="async"
+            className="aspect-[21/9] w-full object-cover brightness-[0.85]"
+          />
+        </div>
       </div>
     </section>
   );

@@ -70,15 +70,19 @@ async function query(sql, params = []) {
   initPool();
 
   if (useSQLite && sqliteDb) {
+    const cleanSql = sql
+      .replace(/ENGINE\s*=\s*\w+/gi, '')
+      .replace(/DEFAULT\s+CHARSET\s*=\s*\w+/gi, '');
+
     return new Promise((resolve, reject) => {
-      const trimmed = sql.trim().toUpperCase();
+      const trimmed = cleanSql.trim().toUpperCase();
       if (trimmed.startsWith('SELECT') || trimmed.startsWith('SHOW')) {
-        sqliteDb.all(sql, params, (err, rows) => {
+        sqliteDb.all(cleanSql, params, (err, rows) => {
           if (err) return reject(err);
           resolve(rows || []);
         });
       } else {
-        sqliteDb.run(sql, params, function (err) {
+        sqliteDb.run(cleanSql, params, function (err) {
           if (err) return reject(err);
           resolve({ insertId: this ? this.lastID : 0, affectedRows: this ? this.changes : 0 });
         });

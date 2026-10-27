@@ -3,33 +3,25 @@ import AboutSection from "@/components/AboutSection";
 import DesignProcess from "@/components/DesignProcess";
 import Testimonials from "@/components/Testimonials";
 import FinalCTA from "@/components/FinalCTA";
-import { Compass, Sparkles } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "About Studio — NIRABI DESIGN STUDIO",
-  description:
-    "NIRABI DESIGN STUDIO is an interior architecture and turnkey design atelier grounded in material honesty, structural clarity, and everyday living in Chennai.",
+  title: "About Us — NIRABI DESIGN STUDIO",
+  description: "Learn about NIRABI DESIGN STUDIO, our experienced team of interior designers and carpenters in Madipakkam, Chennai.",
 };
 
 export default function AboutPage() {
   return (
     <>
-      {/* Editorial Hero Header */}
-      <section className="relative overflow-hidden bg-[#080808] pt-40 pb-20 lg:pt-48 lg:pb-28 border-b border-surface-border">
-        <div className="pointer-events-none absolute left-1/2 top-0 h-[450px] w-[600px] -translate-x-1/2 rounded-full bg-gold/5 blur-[140px]" />
-        
-        <div className="relative mx-auto max-w-5xl px-6 text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-gold/30 bg-gold/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-gold mb-6">
-            <Compass size={14} />
-            <span>Atelier & Manifesto</span>
-          </div>
-
-          <h1 className="font-display text-4xl sm:text-5xl lg:text-7xl text-ivory tracking-tight leading-[1.1]">
-            Interior spaces, <span className="italic text-gold">thoughtfully</span> designed.
+      <section className="relative border-b border-white/10 bg-[#080808] pb-16 pt-36 lg:pb-24 lg:pt-44">
+        <div className="mx-auto max-w-7xl px-6 lg:px-10">
+          <span className="font-mono text-[11px] uppercase tracking-[0.25em] text-gold font-semibold">
+            About Us · Chennai Studio
+          </span>
+          <h1 className="mt-4 max-w-3xl font-display text-4xl text-ivory sm:text-5xl lg:text-6xl">
+            We design and build modern homes with honest craftsmanship.
           </h1>
-
-          <p className="mx-auto mt-6 max-w-2xl text-base sm:text-lg text-ivory/70 leading-relaxed font-light">
-            We architect environments where everyday routines feel graceful, materials feel tactile and honest, and proportions bring quiet tranquility.
+          <p className="mt-6 max-w-xl text-base leading-relaxed text-ivory/80">
+            At NIRABI DESIGN STUDIO, we make home interiors simple, transparent, and long-lasting. Meet our team, explore our 6-step process, and see why homeowners across Chennai trust us with their dream homes.
           </p>
         </div>
       </section>

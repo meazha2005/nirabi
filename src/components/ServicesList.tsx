@@ -1,162 +1,148 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowUpRight, CheckCircle2, Sparkles, MessageSquare } from "lucide-react";
+import Link from "next/link";
+import { ArrowUpRight, CheckCircle2, Clock, ShieldCheck } from "lucide-react";
 import { services } from "@/data/services";
 
 export default function ServicesList() {
-  const [active, setActive] = useState<string>(services[0].id);
-  const activeService = services.find((s) => s.id === active) || services[0];
-
-  const openConciergeForService = (serviceTitle: string) => {
-    const detail = { detail: { context: { project_type: serviceTitle } } };
-    window.dispatchEvent(new CustomEvent("nirabi:open-chat", detail));
-    window.dispatchEvent(new CustomEvent("yavi:open-chat", detail));
-  };
+  const [activeId, setActiveId] = useState<string>(services[0]?.id || "villa-architecture");
+  const activeService = services.find((s) => s.id === activeId) || services[0];
 
   return (
-    <section className="relative overflow-hidden py-20 lg:py-28 bg-[#080808]">
-      <div className="relative mx-auto max-w-7xl px-6 lg:px-10">
-        
-        <div className="grid gap-12 lg:grid-cols-[1.2fr_1fr] items-start">
-          {/* Left Column: Interactive Discipline List */}
-          <div>
-            <div className="text-[11px] font-semibold uppercase tracking-[0.2em] text-gold mb-8">
-              Available Studio Disciplines ({services.length})
-            </div>
+    <section className="relative border-b border-white/10 bg-[#080808] py-20 lg:py-28">
+      <div className="mx-auto max-w-7xl px-6 lg:px-10">
+        <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
 
-            <ul className="divide-y divide-white/10 border-t border-b border-white/10">
+          {/* Left Column: Interactive Capabilities Directory */}
+          <div className="lg:col-span-6">
+            <span className="font-mono text-[11px] uppercase tracking-[0.25em] text-gold font-semibold">
+              Our Capabilities
+            </span>
+            <h2 className="mt-2 font-display text-3xl text-ivory sm:text-4xl">
+              Interior Design &amp; Build
+            </h2>
+
+            <div className="mt-8 divide-y divide-white/10 border-y border-white/10">
               {services.map((service, i) => {
-                const isSelected = active === service.id;
+                const isSelected = service.id === activeId;
                 return (
-                  <li
-                    key={service.id}
-                    onMouseEnter={() => setActive(service.id)}
-                    className={`group transition-all duration-300 ${
-                      isSelected ? "bg-white/[0.02]" : "hover:bg-white/[0.01]"
-                    }`}
-                  >
+                  <div key={service.id} className="group">
                     <button
-                      onClick={() => setActive(service.id)}
-                      className="w-full text-left py-6 px-3 flex flex-col focus:outline-none"
+                      onClick={() => setActiveId(service.id)}
+                      className={`flex w-full items-center justify-between py-5 text-left transition-colors focus:outline-none ${
+                        isSelected ? "text-gold" : "text-ivory hover:text-gold"
+                      }`}
                     >
-                      <div className="flex w-full items-center justify-between gap-4">
-                        <div className="flex items-center gap-5">
-                          <span className="font-mono text-xs text-gold/70">
-                            0{i + 1}
-                          </span>
-                          <span
-                            className={`font-display text-xl sm:text-2xl transition-colors duration-300 ${
-                              isSelected ? "text-gold font-bold" : "text-ivory group-hover:text-gold"
-                            }`}
-                          >
-                            {service.title}
-                          </span>
-                        </div>
-
-                        <div
-                          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border transition-all duration-300 ${
-                            isSelected
-                              ? "border-gold bg-gold text-near-black shadow-md"
-                              : "border-white/10 text-ivory/40 group-hover:border-gold/40 group-hover:text-gold"
-                          }`}
-                        >
-                          <ArrowUpRight size={16} />
-                        </div>
+                      <div className="flex items-baseline gap-4">
+                        <span className="font-mono text-xs text-gold/70">
+                          0{i + 1}
+                        </span>
+                        <span className="font-display text-xl sm:text-2xl">
+                          {service.title}
+                        </span>
                       </div>
-
-                      {/* Mobile Accordion Preview */}
-                      <div
-                        className={`w-full overflow-hidden transition-all duration-500 ease-out-expo lg:hidden ${
-                          isSelected ? "mt-4 max-h-[420px] opacity-100" : "max-h-0 opacity-0 pointer-events-none"
+                      <ArrowUpRight
+                        size={18}
+                        className={`transition-transform duration-300 ${
+                          isSelected ? "rotate-45 text-gold" : "text-ivory/30 group-hover:text-gold"
                         }`}
-                      >
-                        <p className="text-xs text-ivory/70 mb-4 leading-relaxed">
+                      />
+                    </button>
+
+                    {/* Mobile Expansion Drawer */}
+                    {isSelected && (
+                      <div className="pb-6 pt-2 lg:hidden space-y-4">
+                        <p className="text-xs leading-relaxed text-ivory/70">
                           {service.description}
                         </p>
-                        <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl border border-white/10 shadow-lg mb-4">
+                        <div className="relative aspect-[16/10] w-full overflow-hidden rounded-sm border border-white/10">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
                             src={service.image}
                             alt={service.title}
+                            loading="lazy"
+                            decoding="async"
                             className="h-full w-full object-cover"
                           />
                         </div>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            openConciergeForService(service.title);
-                          }}
-                          className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-gold px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-near-black"
+                        <div className="space-y-1.5 text-[11px] text-ivory/70 border-t border-white/10 pt-3">
+                          <div className="flex items-center gap-2"><Clock size={12} className="text-gold" /> <span>{service.timeline}</span></div>
+                          <div className="flex items-center gap-2"><ShieldCheck size={12} className="text-gold" /> <span>{service.scope}</span></div>
+                        </div>
+                        <Link
+                          href="/contact"
+                          className="inline-flex items-center gap-2 border border-gold bg-gold px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-near-black hover:bg-gold-light"
                         >
-                          <MessageSquare size={13} />
-                          <span>Consult for {service.title}</span>
-                        </button>
+                          <span>Get Quote for {service.title}</span>
+                          <ArrowUpRight size={13} />
+                        </Link>
                       </div>
-                    </button>
-                  </li>
+                    )}
+                  </div>
                 );
               })}
-            </ul>
+            </div>
           </div>
 
-          {/* Right Column: Desktop Sticky Preview Frame */}
-          <div className="sticky top-28 hidden lg:block">
-            <div className="overflow-hidden rounded-3xl border border-white/10 bg-[#121212] p-3 shadow-2xl">
-              <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl bg-near-black">
+          {/* Right Column: Desktop Service Preview */}
+          <div className="hidden lg:col-span-6 lg:block">
+            <div className="sticky top-28 border border-white/10 bg-[#0C0C0B] p-8">
+              <div className="relative aspect-[16/10] w-full overflow-hidden border border-white/10 bg-[#141413]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={activeService.image}
                   alt={activeService.title}
-                  className="h-full w-full object-cover transition-transform duration-700 ease-out-expo hover:scale-105"
+                  loading="lazy"
+                  decoding="async"
+                  className="h-full w-full object-cover transition-all duration-500"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/30 opacity-70" />
-
-                <div className="absolute top-4 left-4 rounded-full bg-near-black/85 backdrop-blur-md border border-gold/30 px-3.5 py-1 text-[10px] font-semibold text-gold uppercase tracking-wider">
-                  Featured Discipline
+                <div className="absolute top-3 left-3 bg-[#080808]/85 px-3 py-1 font-mono text-[10px] uppercase tracking-wider text-gold border border-white/10">
+                  {activeService.timeline}
                 </div>
               </div>
 
-              <div className="p-6">
-                <h3 className="font-display text-2xl font-bold text-ivory">
+              <div className="mt-6">
+                <span className="font-mono text-[10px] uppercase tracking-wider text-gold font-medium">
+                  {activeService.scope}
+                </span>
+                <h3 className="mt-1 font-display text-2xl text-ivory">
                   {activeService.title}
                 </h3>
-                <p className="mt-3 text-xs text-ivory/70 leading-relaxed">
+                <p className="mt-3 text-xs leading-relaxed text-ivory/70">
                   {activeService.description}
                 </p>
 
-                <div className="mt-5 space-y-2 border-t border-white/10 pt-4 text-xs text-ivory/60">
-                  <div className="flex items-center gap-2 text-gold">
-                    <CheckCircle2 size={14} />
-                    <span>Custom tailored 3D walkthrough and specifications</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-gold">
-                    <CheckCircle2 size={14} />
-                    <span>10-Year hardware and joinery warranty</span>
+                <div className="mt-6 border-t border-white/10 pt-6">
+                  <span className="font-mono text-[10px] uppercase tracking-wider text-ivory/50 block font-medium">What We Deliver</span>
+                  <div className="mt-3 grid grid-cols-2 gap-2 text-xs text-ivory/80">
+                    {activeService.deliverables?.map((del, dIdx) => (
+                      <span key={dIdx} className="flex items-center gap-2">
+                        <CheckCircle2 size={13} className="text-gold shrink-0" />
+                        <span className="truncate">{del}</span>
+                      </span>
+                    )) || (
+                      <>
+                        <span className="flex items-center gap-2"><CheckCircle2 size={13} className="text-gold" /> 3D Walkthroughs</span>
+                        <span className="flex items-center gap-2"><CheckCircle2 size={13} className="text-gold" /> Full Electrical &amp; Lighting Plans</span>
+                      </>
+                    )}
                   </div>
                 </div>
 
-                <div className="mt-6 flex gap-3">
-                  <button
-                    onClick={() => openConciergeForService(activeService.title)}
-                    className="flex-1 inline-flex items-center justify-center gap-2 rounded-full bg-gold px-5 py-3 text-xs font-bold uppercase tracking-wider text-near-black hover:bg-gold-light transition-all shadow-md"
-                  >
-                    <MessageSquare size={14} />
-                    <span>Inquire for {activeService.title}</span>
-                  </button>
-                  <a
+                <div className="mt-8">
+                  <Link
                     href="/contact"
-                    className="inline-flex items-center justify-center rounded-full border border-white/20 bg-surface-card px-4 py-3 text-xs font-semibold text-ivory hover:border-gold hover:text-gold transition-all"
+                    className="inline-flex items-center gap-2 border border-gold bg-gold px-6 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-near-black transition-colors hover:bg-gold-light"
                   >
-                    Form →
-                  </a>
+                    <span>Get a Quote for This Service</span>
+                    <ArrowUpRight size={14} />
+                  </Link>
                 </div>
               </div>
             </div>
           </div>
-
         </div>
-
       </div>
     </section>
   );

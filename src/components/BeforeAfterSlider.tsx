@@ -1,13 +1,12 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
-import { Sparkles } from "lucide-react";
 
 export default function BeforeAfterSlider({
   beforeSrc,
   afterSrc,
-  beforeLabel = "Original Space (Before)",
-  afterLabel = "NIRABI Crafted (After)",
+  beforeLabel = "Before Renovation",
+  afterLabel = "Completed Architecture",
 }: {
   beforeSrc: string;
   afterSrc: string;
@@ -16,7 +15,7 @@ export default function BeforeAfterSlider({
 }) {
   const [pos, setPos] = useState(50);
   const containerRef = useRef<HTMLDivElement>(null);
-  const dragging = useRef(false);
+  const isDragging = useRef(false);
 
   const updateFromClientX = useCallback((clientX: number) => {
     const el = containerRef.current;
@@ -26,91 +25,108 @@ export default function BeforeAfterSlider({
     setPos(Math.min(100, Math.max(0, pct)));
   }, []);
 
+  // On desktop mouse, clicking or dragging anywhere on the slider updates position
   const onPointerDown = (e: React.PointerEvent) => {
-    dragging.current = true;
-    (e.target as Element).setPointerCapture(e.pointerId);
-    updateFromClientX(e.clientX);
+    if (e.pointerType === "mouse") {
+      isDragging.current = true;
+      (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+      updateFromClientX(e.clientX);
+    }
   };
 
   const onPointerMove = (e: React.PointerEvent) => {
-    if (!dragging.current) return;
+    if (!isDragging.current) return;
     updateFromClientX(e.clientX);
   };
 
-  const onPointerUp = () => {
-    dragging.current = false;
+  const onPointerUp = (e: React.PointerEvent) => {
+    if (isDragging.current) {
+      isDragging.current = false;
+      try {
+        (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
+      } catch {}
+    }
   };
 
   const onKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "ArrowLeft") setPos((p) => Math.max(0, p - 4));
-    if (e.key === "ArrowRight") setPos((p) => Math.min(100, p + 4));
+    if (e.key === "ArrowLeft") setPos((p) => Math.max(0, p - 3));
+    if (e.key === "ArrowRight") setPos((p) => Math.min(100, p + 3));
   };
 
   return (
-    <div className="relative w-full overflow-hidden rounded-3xl border border-white/10 bg-[#0A0A0A] p-2 shadow-2xl transition-all duration-500 hover:border-gold/30">
+    <div
+      ref={containerRef}
+      className="relative aspect-[16/10] w-full select-none overflow-hidden rounded-sm border border-white/10 bg-[#080808] touch-pan-y shadow-2xl"
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={onPointerUp}
+      onPointerCancel={onPointerUp}
+    >
+      {/* After Image Layer (Base) */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={afterSrc}
+        alt={afterLabel}
+        loading="lazy"
+        decoding="async"
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover"
+        draggable={false}
+      />
+      <div className="pointer-events-none absolute bottom-4 right-4 z-10 border border-gold/40 bg-[#0A0A09]/85 px-3 py-1 font-mono text-[10px] uppercase tracking-wider text-gold backdrop-blur-sm">
+        {afterLabel}
+      </div>
+
+      {/* Before Image Layer (Clipped from right) */}
       <div
-        ref={containerRef}
-        className="relative aspect-[16/10] w-full select-none overflow-hidden rounded-2xl bg-near-black touch-none cursor-ew-resize"
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={onPointerUp}
+        className="pointer-events-none absolute inset-0"
+        style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }}
       >
-        {/* After — Full Base Image */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={afterSrc}
-          alt={afterLabel}
+          src={beforeSrc}
+          alt={beforeLabel}
+          loading="lazy"
+          decoding="async"
           className="absolute inset-0 h-full w-full object-cover"
           draggable={false}
         />
-        <div className="absolute bottom-5 right-5 z-10 flex items-center gap-1.5 rounded-full border border-gold/40 bg-near-black/85 px-4 py-1.5 text-[11px] font-semibold tracking-wider text-gold shadow-lg backdrop-blur-md">
-          <Sparkles size={12} className="text-gold" />
-          <span>{afterLabel}</span>
-        </div>
-
-        {/* Before — Clipped Image */}
-        <div
-          className="absolute inset-0 overflow-hidden"
-          style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }}
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={beforeSrc}
-            alt={beforeLabel}
-            className="absolute inset-0 h-full w-full object-cover filter contrast-90"
-            draggable={false}
-          />
-          <div className="absolute bottom-5 left-5 z-10 rounded-full border border-white/20 bg-near-black/85 px-4 py-1.5 text-[11px] font-semibold tracking-wider text-ivory/80 shadow-lg backdrop-blur-md">
-            <span>{beforeLabel}</span>
-          </div>
-        </div>
-
-        {/* Divider & Tactile Handle */}
-        <div
-          role="slider"
-          tabIndex={0}
-          aria-label="Before and after comparison slider"
-          aria-valuenow={Math.round(pos)}
-          aria-valuemin={0}
-          aria-valuemax={100}
-          onKeyDown={onKeyDown}
-          className="absolute top-0 z-20 flex h-full -translate-x-1/2 cursor-ew-resize flex-col items-center justify-center outline-none"
-          style={{ left: `${pos}%` }}
-        >
-          {/* Subtle gold line */}
-          <div className="h-full w-[2px] bg-gradient-to-b from-gold/20 via-gold to-gold/20 shadow-[0_0_12px_rgba(242,223,181,0.8)]" />
-
-          {/* Central gold handle pill */}
-          <div className="absolute flex h-12 w-12 items-center justify-center rounded-full border border-gold bg-[#141414] text-gold shadow-[0_0_20px_rgba(242,223,181,0.6)] backdrop-blur-md transition-transform duration-200 hover:scale-110 active:scale-95">
-            <span className="text-sm font-bold tracking-tight">↔</span>
-          </div>
+        <div className="pointer-events-none absolute bottom-4 left-4 z-10 border border-white/20 bg-[#0A0A09]/85 px-3 py-1 font-mono text-[10px] uppercase tracking-wider text-ivory/80 backdrop-blur-sm">
+          {beforeLabel}
         </div>
       </div>
 
-      {/* Micro-instructions banner */}
-      <div className="mt-3 flex items-center justify-between px-3 text-[11px] text-ivory/45">
-        <span>Touch or drag horizontal slider</span>
-        <span className="font-mono text-gold/80">{Math.round(pos)}% Handover Reveal</span>
+      {/* Vertical Hairline Divider & Tactile Slider Badge */}
+      <div
+        role="slider"
+        tabIndex={0}
+        aria-label="Before and after comparison position"
+        aria-valuenow={Math.round(pos)}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        onKeyDown={onKeyDown}
+        onPointerDown={(e) => {
+          e.stopPropagation();
+          isDragging.current = true;
+          (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+        }}
+        onPointerMove={(e) => {
+          if (isDragging.current) {
+            updateFromClientX(e.clientX);
+          }
+        }}
+        onPointerUp={(e) => {
+          isDragging.current = false;
+          try {
+            (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
+          } catch {}
+        }}
+        className="absolute top-0 z-20 flex h-full -translate-x-1/2 cursor-ew-resize flex-col items-center justify-center focus:outline-none touch-none"
+        style={{ left: `${pos}%` }}
+      >
+        <div className="h-full w-[2px] bg-gold shadow-[0_0_8px_rgba(232,212,176,0.6)]" />
+        <div className="absolute flex h-9 w-14 items-center justify-center border border-gold bg-[#0C0C0B] px-2 text-gold shadow-2xl transition-transform active:scale-95">
+          <span className="font-mono text-[11px] font-bold tracking-wider">◄ ►</span>
+        </div>
       </div>
     </div>
   );

@@ -1,18 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import TextReveal from "@/components/animations/TextReveal";
-import { Sparkles, Check, ArrowRight, Wand2 } from "lucide-react";
+import { ArrowUpRight, Check } from "lucide-react";
 
-const STYLES = [
-  { id: "minimal", label: "Minimalist Pure", tag: "Spatial Simplicity", image: "/images/styles/minimal.jpg" },
-  { id: "modern", label: "Warm Modernism", tag: "Clean Geometries", image: "/images/styles/modern.jpg" },
-  { id: "luxury", label: "Dark Luxury", tag: "Deep Obsidian & Brass", image: "/images/styles/luxury.jpg" },
-  { id: "contemporary", label: "Contemporary", tag: "Sculptural Forms", image: "/images/styles/contemporary.jpg" },
-  { id: "warm", label: "Warm Timber", tag: "Oak & Travertine", image: "/images/styles/warm.jpg" },
-  { id: "traditional", label: "Heritage Revival", tag: "Classic Indian Arch", image: "/images/styles/traditional.jpg" },
-  { id: "industrial", label: "Refined Loft", tag: "Steel & Fluted Glass", image: "/images/styles/industrial.jpg" },
-  { id: "natural", label: "Biophilic Sanctuary", tag: "Botanicals & Light", image: "/images/styles/natural.jpg" },
+const MOODS = [
+  { id: "minimal-clean", label: "Minimal & Clean", desc: "Handle-less cabinets, warm oak wood, and bright open rooms", image: "/generated/style_minimal.jpg" },
+  { id: "luxury-marble", label: "Luxury Marble", desc: "Polished marble flooring, gold accents, and grand cove lighting", image: "/generated/style_luxury.jpg" },
+  { id: "modern-coastal", label: "Modern Coastal", desc: "Airy living spaces, light fabrics, and refreshing open layouts", image: "/generated/style_coastal.jpg" },
+  { id: "traditional-teak", label: "Traditional South Indian", desc: "Rich teakwood, brass lamps, Kadappa stone, and pooja carvings", image: "/generated/style_traditional.jpg" },
+  { id: "warm-earthy", label: "Warm & Earthy", desc: "Earthy wall tones, cozy textures, and soft comfortable furniture", image: "/generated/style_warm.jpg" },
+  { id: "glass-metal", label: "Glass & Black Metal", desc: "Modern fluted glass partitions and sleek dark metal frames", image: "/generated/style_industrial.jpg" },
+  { id: "executive-wood", label: "Executive Wood Finish", desc: "Dark walnut veneer, clean straight lines, and warm spotlights", image: "/generated/style_executive.jpg" },
+  { id: "indoor-garden", label: "Indoor Plants & Light", desc: "Indoor green corners, skylight corners, and natural stones", image: "/generated/style_natural.jpg" },
 ];
 
 export default function StyleQuiz() {
@@ -21,118 +20,99 @@ export default function StyleQuiz() {
   const toggle = (id: string) =>
     setSelected((prev) => (prev.includes(id) ? prev.filter((s) => s !== id) : [...prev, id]));
 
-  const direction =
+  const directionSummary =
     selected.length === 0
       ? null
       : selected
-          .map((id) => STYLES.find((s) => s.id === id)?.label)
+          .map((id) => MOODS.find((m) => m.id === id)?.label)
           .filter(Boolean)
-          .join(" + ");
+          .join(" · ");
 
   const openConcierge = () => {
-    const detail = { detail: { context: { design_style: direction } } };
+    const detail = { detail: { context: { design_style: directionSummary } } };
     window.dispatchEvent(new CustomEvent("nirabi:open-chat", detail));
-    window.dispatchEvent(new CustomEvent("yavi:open-chat", detail));
   };
 
   return (
-    <section className="relative overflow-hidden py-24 lg:py-32 bg-[#080808]">
-      <div className="relative mx-auto max-w-7xl px-6 lg:px-10">
-        {/* Header */}
-        <div className="text-center max-w-3xl mx-auto mb-14">
-          <div className="inline-flex items-center gap-2 rounded-full border border-gold/30 bg-gold/5 px-3.5 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-gold mb-3">
-            <Wand2 size={13} />
-            <span>Aesthetic Discovery</span>
+    <section className="relative border-b border-white/10 bg-[#080808] py-20 lg:py-28">
+      <div className="mx-auto max-w-7xl px-6 lg:px-10">
+        {/* Section Header */}
+        <div className="flex flex-col justify-between gap-4 border-b border-white/10 pb-6 sm:flex-row sm:items-end">
+          <div>
+            <span className="font-mono text-[11px] uppercase tracking-[0.25em] text-gold font-semibold">
+              Choose Your Style
+            </span>
+            <h2 className="mt-2 font-display text-3xl text-ivory sm:text-4xl">
+              What Style Do You Like?
+            </h2>
           </div>
-          <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl text-ivory tracking-tight">
-            Define Your Spatial Mood
-          </h2>
-          <p className="mt-3 text-sm text-ivory/65 leading-relaxed">
-            Select one or multiple sensibilities below. Our studio concierge will tailor material swatches and 3D architectural renders around your preferences.
+          <p className="max-w-xs text-xs leading-relaxed text-ivory/70">
+            Tap on any style you like. We will customize your 3D design and quotation based on your choices.
           </p>
         </div>
 
-        {/* 8-Card Grid */}
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:gap-6">
-          {STYLES.map((style) => {
-            const isSelected = selected.includes(style.id);
+        {/* Style Cards Grid */}
+        <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
+          {MOODS.map((mood) => {
+            const isSelected = selected.includes(mood.id);
             return (
               <button
-                key={style.id}
-                onClick={() => toggle(style.id)}
+                key={mood.id}
+                onClick={() => toggle(mood.id)}
                 aria-pressed={isSelected}
-                className={`group relative aspect-[4/5] overflow-hidden rounded-2xl border text-left transition-all duration-500 ease-out-expo ${
+                className={`group relative flex flex-col justify-between overflow-hidden border p-4 text-left transition-all duration-300 focus:outline-none ${
                   isSelected
-                    ? "border-gold ring-2 ring-gold/70 shadow-[0_0_30px_rgba(242,223,181,0.35)] scale-[1.02]"
-                    : "border-white/10 hover:border-gold/40 hover:-translate-y-1"
+                    ? "border-gold bg-[#141310]"
+                    : "border-white/10 bg-[#0C0C0B] hover:border-white/30 hover:bg-[#111110]"
                 }`}
               >
-                {/* Image */}
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={style.image}
-                  alt={style.label}
-                  className="h-full w-full object-cover transition-transform duration-700 ease-out-expo group-hover:scale-110"
-                />
-
-                {/* Shading Vignette */}
-                <div
-                  className={`absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent transition-opacity duration-300 ${
-                    isSelected ? "opacity-90" : "opacity-75 group-hover:opacity-85"
-                  }`}
-                />
-
-                {/* Selection Checkmark Indicator */}
-                <div
-                  className={`absolute top-3.5 right-3.5 flex h-7 w-7 items-center justify-center rounded-full border transition-all duration-300 ${
-                    isSelected
-                      ? "border-gold bg-gold text-near-black shadow-lg"
-                      : "border-white/20 bg-black/40 text-transparent group-hover:border-white/40"
-                  }`}
-                >
-                  <Check size={14} className={isSelected ? "text-near-black" : "opacity-0"} />
+                <div className="relative aspect-[4/3] w-full overflow-hidden bg-[#181817]">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={mood.image}
+                    alt={mood.label}
+                    loading="lazy"
+                    decoding="async"
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  {isSelected && (
+                    <div className="absolute top-2 right-2 flex h-5 w-5 items-center justify-center bg-gold text-near-black">
+                      <Check size={12} strokeWidth={3} />
+                    </div>
+                  )}
                 </div>
 
-                {/* Content Overlay */}
-                <div className="absolute inset-x-0 bottom-0 p-4">
-                  <div className="text-[10px] uppercase tracking-wider text-gold/80 font-mono mb-0.5">
-                    {style.tag}
+                <div className="mt-4">
+                  <div className="flex items-center justify-between">
+                    <span className={`text-xs font-semibold tracking-wide ${isSelected ? "text-gold" : "text-ivory"}`}>
+                      {mood.label}
+                    </span>
                   </div>
-                  <div
-                    className={`font-display text-lg font-medium transition-colors ${
-                      isSelected ? "text-gold" : "text-ivory group-hover:text-gold"
-                    }`}
-                  >
-                    {style.label}
-                  </div>
+                  <p className="mt-1 text-[11px] leading-relaxed text-ivory/60 line-clamp-2">
+                    {mood.desc}
+                  </p>
                 </div>
               </button>
             );
           })}
         </div>
 
-        {/* Active Selection Result Bar */}
-        {direction && (
-          <div className="mt-12 rounded-3xl border border-gold/40 bg-gradient-to-r from-[#141414] via-[#1A1A1A] to-[#141414] p-8 shadow-2xl backdrop-blur-md text-center max-w-3xl mx-auto">
-            <span className="text-[10px] uppercase tracking-[0.25em] text-gold font-bold">
-              Your Tailored Aesthetic Direction
-            </span>
-            <p className="mt-2 font-display text-2xl sm:text-3xl italic text-gold">
-              &ldquo;{direction}&rdquo;
-            </p>
-            <p className="mt-2 text-xs text-ivory/60">
-              Ready to see this sensibility tailored to your floor plan and spatial volume?
-            </p>
-            <div className="mt-6 flex flex-wrap justify-center gap-3">
-              <button
-                onClick={openConcierge}
-                className="inline-flex items-center gap-2 rounded-full bg-gold px-7 py-3 text-xs font-bold uppercase tracking-wider text-near-black transition-all hover:bg-gold-light hover:shadow-[0_0_25px_rgba(242,223,181,0.4)]"
-              >
-                <Sparkles size={14} />
-                <span>Transmit To NIRABI Concierge</span>
-                <ArrowRight size={14} />
-              </button>
+        {/* Selected Direction Action Bar */}
+        {directionSummary && (
+          <div className="mt-8 flex flex-col justify-between gap-6 border border-gold/40 bg-[#121211] p-6 sm:flex-row sm:items-center">
+            <div>
+              <span className="font-mono text-[10px] uppercase tracking-wider text-gold font-medium">
+                Styles You Selected
+              </span>
+              <p className="mt-1 font-display text-xl text-ivory">{directionSummary}</p>
             </div>
+            <button
+              onClick={openConcierge}
+              className="inline-flex items-center justify-center gap-2 border border-gold bg-gold px-6 py-3 text-xs font-semibold uppercase tracking-[0.12em] text-near-black transition-colors hover:bg-gold-light shrink-0"
+            >
+              <span>Get Free Quote for This Style</span>
+              <ArrowUpRight size={14} />
+            </button>
           </div>
         )}
       </div>

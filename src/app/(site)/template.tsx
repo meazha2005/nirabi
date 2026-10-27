@@ -11,8 +11,8 @@ export default function Template({ children }: { children: React.ReactNode }) {
     
     gsap.fromTo(
       container.current,
-      { opacity: 0, y: 20 },
-      { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }
+      { opacity: 0, y: 12 },
+      { opacity: 1, y: 0, duration: 0.5, ease: "power2.out", clearProps: "all" }
     );
   }, []);
 

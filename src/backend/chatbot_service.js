@@ -105,27 +105,27 @@ function runOfflineMockTurn(messages, knownFields) {
   if (!alreadyShowedImage) {
     if (lastMsgLower.includes("villa")) {
       fields["property_type"] = "Villa";
-      fields["project_type"] = "Full Home Interiors";
-      servicePrefix = "For villas, NIRABI DESIGN STUDIO specializes in premium **Full Home Turnkey Interiors**, handling architectural layouts, custom woodwork, and ambient lighting.\n\nHere is one of our living spaces:\n![NIRABI Villa Project](/images/services/villa.jpeg)\n\n";
+      fields["project_type"] = "Independent Villa Interiors";
+      servicePrefix = "For independent villas, NIRABI DESIGN STUDIO handles complete interior design and carpentry, from living rooms to staircases and bedrooms.\n\nHere is a recent villa project by NIRABI:\n![NIRABI Villa Project](/generated/hero_villa.jpg)\n\n";
     } else if (lastMsgLower.includes("apartment") || lastMsgLower.includes("flat")) {
       fields["property_type"] = "Apartment";
-      fields["project_type"] = "Apartment Interiors";
-      servicePrefix = "For apartments, we design **space-maximizing modular cabinetry** and bespoke wall finishes.\n\nHere is an apartment project by NIRABI:\n![NIRABI Apartment Project](/images/services/apartment.jpeg)\n\n";
+      fields["project_type"] = "Apartment & Flat Interiors";
+      servicePrefix = "For apartments, we design smart space-saving storage, false ceilings, and beautiful modern living spaces.\n\nHere is a recent apartment project by NIRABI:\n![NIRABI Apartment Project](/generated/service_apartment.jpg)\n\n";
     } else if (lastMsgLower.includes("kitchen")) {
       fields["property_type"] = "Kitchen";
       fields["project_type"] = "Modular Kitchens";
-      servicePrefix = "Our **Modular Kitchens** feature premium acrylic finishes, quartz stone surfaces, and German soft-close hardware.\n\nCheck out this kitchen design:\n![NIRABI Modular Kitchen](/images/services/kitchen.jpeg)\n\n";
+      servicePrefix = "For modular kitchens, we use waterproof plywood, soft-close German fittings, and durable stone countertops built for everyday cooking.\n\nHere is a modular kitchen by NIRABI:\n![NIRABI Modular Kitchen](/generated/service_kitchen.jpg)\n\n";
     } else if (lastMsgLower.includes("office") || lastMsgLower.includes("commercial") || lastMsgLower.includes("corporate")) {
       fields["property_type"] = "Office";
-      fields["project_type"] = "Commercial Interiors";
-      servicePrefix = "For commercial projects, NIRABI delivers end-to-end **Office Fitouts** engineered for ergonomic focus.\n\nHere is an executive reception:\n![NIRABI Office Project](/images/services/office.jpg)\n\n";
+      fields["project_type"] = "Office & Commercial Interiors";
+      servicePrefix = "For offices and commercial spaces, we build ergonomic workstations, meeting rooms, reception areas, and manager cabins.\n\nHere is an office project by NIRABI:\n![NIRABI Office Project](/generated/service_office.jpg)\n\n";
     }
   }
 
   let pricingPrefix = "";
   const isAskingPrice = ["cost", "price", "pricing", "package", "packages", "rate", "rates", "how much"].some(w => lastMsgLower.includes(w));
   if (!alreadyShowedPricing && isAskingPrice && !lastAssistantMsg.includes("approximate budget")) {
-    pricingPrefix = "At NIRABI DESIGN STUDIO, we provide 3 primary interior packages tailored to your vision:\n- **Standard** (₹1,000–₹1,500/sq.ft): Smart, high-quality finishes & modular cabinetry.\n- **Premium** (₹1,800–₹2,500/sq.ft): Custom woodwork, designer styling & false ceiling accents.\n- **Luxury** (₹3,500+/sq.ft): Elite Italian marble, bespoke architectural furniture & home automation.\n\n";
+    pricingPrefix = "At NIRABI DESIGN STUDIO, our estimated interior budgets are:\n- **Standard** (₹1,000–₹1,500/sq.ft): Quality modular woodwork, laminates & hardware.\n- **Premium** (₹1,800–₹2,500/sq.ft): Custom veneer woodwork, false ceilings & ambient lighting.\n- **Luxury** (₹3,000+/sq.ft): Italian marble, high-end finishes, and full turnkey execution.\n\n";
   }
 
   // Global fallback extraction on last user message
@@ -148,30 +148,30 @@ function runOfflineMockTurn(messages, knownFields) {
   let reply = "";
 
   if (missing.length === 0) {
-    reply = "Thank you! I have gathered all your project details. A senior architect from NIRABI DESIGN STUDIO will reach out to you shortly with tailored design concepts.";
+    reply = "Thank you! We have received your project details. Our design team will contact you shortly with ideas and pricing for your home.";
     isComplete = true;
   } else {
     const nextF = missing[0];
     if (nextF === "name") {
-      reply = "Got it. May I know your name, please?";
+      reply = "Got it! May I know your name, please?";
     } else if (nextF === "location") {
-      reply = "Where is your property located? (e.g., Chennai, Madipakkam, Tambaram, etc.)";
+      reply = "Where is your house or flat located in Chennai? (e.g., Madipakkam, OMR, Velachery, Anna Nagar)";
     } else if (nextF === "property_type") {
-      reply = "What type of property is this? (e.g., Villa, Apartment, Office, Kitchen)";
+      reply = "What type of property is this? (e.g., 2BHK/3BHK Apartment, Independent Villa, Kitchen, or Office)";
     } else if (nextF === "design_style") {
-      reply = "What design style do you prefer? (e.g., Modern, Contemporary, Minimalist, Luxury)";
+      reply = "What design look do you prefer? (e.g., Modern, Minimal, Traditional Wood, or Luxury)";
     } else if (nextF === "budget") {
-      reply = "What is your approximate budget for this project?";
+      reply = "What is your approximate budget for this interior work?";
     } else if (nextF === "email") {
       reply = (lastAssistantMsg && lastAssistantMsg.includes("email address") && !fields.email)
-        ? "It seems that's not a valid email address. Could you please share a valid email address?"
-        : "Perfect. Could you please share your email address so we can send design proposals?";
+        ? "Please share a valid email address so we can send design plans."
+        : "Could you share your email address so we can email design concepts and quotes?";
     } else if (nextF === "phone") {
       reply = (lastAssistantMsg && lastAssistantMsg.includes("phone number") && !fields.phone)
-        ? "It seems that's not a valid 10-digit phone number. Please share a valid phone number."
-        : "Lastly, what is the best phone number to reach you?";
+        ? "Please share a valid 10-digit mobile number."
+        : "Lastly, what is the best phone number to reach you on?";
     } else {
-      reply = "Could you tell me a little more about your space?";
+      reply = "Could you tell us a little more about your home requirements?";
     }
   }
 

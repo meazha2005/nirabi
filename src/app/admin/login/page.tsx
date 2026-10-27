@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import { saveToken } from "@/lib/adminAuth";
-import { Lock, Mail } from "lucide-react";
+import { Lock, Mail, ArrowUpRight } from "lucide-react";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -23,62 +23,71 @@ export default function AdminLoginPage() {
       saveToken((res as any).access_token);
       router.push("/admin/dashboard");
     } catch {
-      setError("Incorrect email or password.");
+      setError("Incorrect email or password credentials.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-near-black px-6 py-12">
-      <div className="w-full max-w-sm rounded-3xl border border-surface-border bg-surface-card p-8 shadow-2xl">
+    <div className="flex min-h-screen items-center justify-center bg-[#080808] px-6 py-12">
+      <div className="w-full max-w-sm border border-white/10 bg-[#0C0C0B] p-8 sm:p-10">
         <div className="flex flex-col items-center text-center">
-          <div className="relative mb-3 h-16 w-16 overflow-hidden rounded-2xl border border-gold/40 p-2 bg-near-black shadow-lg">
-            <Image src="/logo.png" alt="NIRABI" fill className="object-contain p-1" priority />
+          <div className="relative mb-3 h-14 w-14 overflow-hidden rounded-sm border border-gold/40 bg-[#141413] p-1.5">
+            <Image src="/logo.png" alt="NIRABI" fill className="object-contain p-0.5" priority />
           </div>
-          <div className="font-display text-2xl font-semibold text-ivory">NIRABI STUDIO</div>
-          <p className="mt-1 text-xs text-gold">Administrator Security Access</p>
+          <h1 className="font-display text-2xl font-semibold text-ivory">NIRABI STUDIO</h1>
+          <p className="mt-1 font-mono text-[10px] uppercase tracking-widest text-gold font-medium">Admin Login</p>
         </div>
 
         <form onSubmit={onSubmit} className="mt-8 space-y-4">
           <div>
-            <label className="mb-1.5 block text-xs font-medium text-ivory/80">Email</label>
+            <label className="font-mono text-[10px] uppercase tracking-wider text-ivory/60 block mb-2">
+              Email Address
+            </label>
             <div className="relative">
-              <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ivory/40" />
+              <Mail size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ivory/40" />
               <input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="admin@nirabi.studio"
-                className="w-full rounded-xl border border-surface-border bg-[#121212] pl-10 pr-4 py-2.5 text-xs text-ivory outline-none placeholder:text-ivory/30 focus:border-gold"
+                className="w-full border border-white/10 bg-[#141413] pl-9 pr-4 py-2.5 text-xs text-ivory placeholder-ivory/30 focus:border-gold focus:outline-none"
               />
             </div>
           </div>
 
           <div>
-            <label className="mb-1.5 block text-xs font-medium text-ivory/80">Password</label>
+            <label className="font-mono text-[10px] uppercase tracking-wider text-ivory/60 block mb-2">
+              Password
+            </label>
             <div className="relative">
-              <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ivory/40" />
+              <Lock size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ivory/40" />
               <input
                 type="password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••••••"
-                className="w-full rounded-xl border border-surface-border bg-[#121212] pl-10 pr-4 py-2.5 text-xs text-ivory outline-none placeholder:text-ivory/30 focus:border-gold"
+                className="w-full border border-white/10 bg-[#141413] pl-9 pr-4 py-2.5 text-xs text-ivory placeholder-ivory/30 focus:border-gold focus:outline-none"
               />
             </div>
           </div>
 
-          {error && <p className="text-xs text-red-400 mt-2">{error}</p>}
+          {error && (
+            <p className="border border-red-500/30 bg-red-950/20 p-2 text-[11px] text-red-300">
+              {error}
+            </p>
+          )}
 
           <button
             type="submit"
             disabled={loading}
-            className="mt-6 w-full rounded-xl bg-gold py-3 text-xs font-bold uppercase tracking-wider text-near-black shadow-lg transition-all hover:bg-gold-light hover:shadow-[0_0_20px_rgba(242,223,181,0.3)] disabled:opacity-50"
+            className="mt-6 flex w-full items-center justify-center gap-2 border border-gold bg-gold py-3 text-xs font-semibold uppercase tracking-[0.14em] text-near-black hover:bg-gold-light transition-colors disabled:opacity-50"
           >
-            {loading ? "Authenticating…" : "Sign In to Admin"}
+            <span>{loading ? "Logging in..." : "Log In"}</span>
+            <ArrowUpRight size={13} />
           </button>
         </form>
       </div>

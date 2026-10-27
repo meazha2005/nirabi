@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRequireAdmin } from "@/lib/adminAuth";
 import { api } from "@/lib/api";
-import { KeyRound, ShieldCheck, Database, Server, UserCheck, AlertCircle, CheckCircle2 } from "lucide-react";
+import { KeyRound, ShieldCheck, Database, Server, UserCheck, AlertCircle, CheckCircle2, ArrowUpRight } from "lucide-react";
 
 export default function SettingsPage() {
   const { token, checked } = useRequireAdmin();
@@ -34,103 +34,109 @@ export default function SettingsPage() {
   if (!checked || !token) return null;
 
   return (
-    <div className="px-6 py-8 sm:px-10 space-y-6 max-w-7xl mx-auto">
+    <div className="mx-auto max-w-7xl px-6 py-8 sm:px-10 space-y-6">
       {/* Header Banner */}
-      <div className="border-b border-surface-border pb-6">
-        <h1 className="font-display text-3xl font-semibold text-ivory">Account & System Configuration</h1>
-        <p className="mt-1 text-xs text-ivory/60">
-          Manage administrator security credentials, database tables, and deployment parameters.
+      <div className="border-b border-white/10 pb-6">
+        <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-gold font-semibold">Admin Settings</span>
+        <h1 className="mt-1 font-display text-3xl font-semibold text-ivory">System &amp; Account Settings</h1>
+        <p className="mt-1 text-xs text-ivory/70">
+          Manage your administrator password and check system database connections.
         </p>
       </div>
 
       <div className="grid gap-8 lg:grid-cols-2">
         {/* Left Column: Account Profile & System Status */}
-        <div className="rounded-2xl border border-surface-border bg-surface-card p-6 shadow-sm space-y-6">
-          <div className="flex items-center gap-2 border-b border-surface-border pb-4">
-            <UserCheck size={18} className="text-gold" />
-            <h2 className="font-display text-lg font-semibold text-ivory">Administrator Profile</h2>
+        <div className="border border-white/10 bg-[#0C0C0B] p-6 space-y-6">
+          <div className="flex items-center gap-2 border-b border-white/10 pb-4">
+            <UserCheck size={16} className="text-gold" />
+            <h2 className="font-display text-lg text-ivory">Admin Profile</h2>
           </div>
 
-          <div className="space-y-4 text-xs">
-            <div className="flex justify-between items-center p-3.5 rounded-xl bg-[#121212] border border-surface-border">
-              <span className="text-ivory/60 font-medium">Administrator Email</span>
-              <span className="font-bold text-gold font-mono">admin@nirabi.studio</span>
+          <div className="space-y-3 text-xs">
+            <div className="flex justify-between items-center p-3.5 border border-white/5 bg-[#121211]">
+              <span className="font-mono text-ivory/60">Admin Email</span>
+              <span className="font-mono font-bold text-gold">admin@nirabi.studio</span>
             </div>
 
-            <div className="flex justify-between items-center p-3.5 rounded-xl bg-[#121212] border border-surface-border">
-              <span className="text-ivory/60 font-medium">Access Role</span>
-              <span className="inline-flex items-center gap-1.5 font-bold text-gold uppercase tracking-wider text-[10px]">
-                <ShieldCheck size={14} /> Full SuperAdmin
+            <div className="flex justify-between items-center p-3.5 border border-white/5 bg-[#121211]">
+              <span className="font-mono text-ivory/60">Role</span>
+              <span className="inline-flex items-center gap-1.5 font-mono text-gold uppercase tracking-wider text-[10px] font-bold">
+                <ShieldCheck size={13} /> SuperAdmin
               </span>
             </div>
 
-            <div className="flex justify-between items-center p-3.5 rounded-xl bg-[#121212] border border-surface-border">
-              <span className="text-ivory/60 font-medium flex items-center gap-2">
-                <Database size={14} className="text-gold" /> Database Table Prefix
+            <div className="flex justify-between items-center p-3.5 border border-white/5 bg-[#121211]">
+              <span className="font-mono text-ivory/60 flex items-center gap-2">
+                <Database size={13} className="text-gold" /> Database
               </span>
-              <span className="font-mono text-gold font-bold">nbs_</span>
+              <span className="font-mono text-gold font-bold">MySQL (Prefix: nbs_)</span>
             </div>
 
-            <div className="flex justify-between items-center p-3.5 rounded-xl bg-[#121212] border border-surface-border">
-              <span className="text-ivory/60 font-medium flex items-center gap-2">
-                <Server size={14} className="text-gold" /> Target Architecture
+            <div className="flex justify-between items-center p-3.5 border border-white/5 bg-[#121211]">
+              <span className="font-mono text-ivory/60 flex items-center gap-2">
+                <Server size={13} className="text-gold" /> Hosting Platform
               </span>
-              <span className="font-semibold text-emerald-400">Vercel Serverless (Next.js 14)</span>
+              <span className="font-mono text-emerald-400">Vercel (Next.js 14)</span>
             </div>
           </div>
         </div>
 
         {/* Right Column: Password Change Form */}
-        <div className="rounded-2xl border border-surface-border bg-surface-card p-6 shadow-sm">
-          <div className="flex items-center gap-2 border-b border-surface-border pb-4">
-            <KeyRound size={18} className="text-gold" />
-            <h2 className="font-display text-lg font-semibold text-ivory">Security & Credentials</h2>
+        <div className="border border-white/10 bg-[#0C0C0B] p-6">
+          <div className="flex items-center gap-2 border-b border-white/10 pb-4">
+            <KeyRound size={16} className="text-gold" />
+            <h2 className="font-display text-lg text-ivory">Change Password</h2>
           </div>
 
           {status === "success" && (
-            <div className="mt-4 flex items-center gap-2.5 rounded-xl border border-emerald-500/30 bg-emerald-950/40 p-4 text-xs font-medium text-emerald-300">
-              <CheckCircle2 size={16} className="text-emerald-400 shrink-0" />
-              Password successfully updated in MySQL!
+            <div className="mt-4 flex items-center gap-2.5 border border-emerald-500/30 bg-emerald-950/20 p-3.5 text-xs text-emerald-300">
+              <CheckCircle2 size={15} className="text-emerald-400 shrink-0" />
+              Password updated successfully in remote database.
             </div>
           )}
           {status === "error" && (
-            <div className="mt-4 flex items-center gap-2.5 rounded-xl border border-red-500/30 bg-red-950/40 p-4 text-xs font-medium text-red-300">
-              <AlertCircle size={16} className="text-red-400 shrink-0" />
+            <div className="mt-4 flex items-center gap-2.5 border border-red-500/30 bg-red-950/20 p-3.5 text-xs text-red-300">
+              <AlertCircle size={15} className="text-red-400 shrink-0" />
               {errorMsg}
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="mt-6 space-y-4">
             <div>
-              <label className="block text-xs font-medium text-ivory/80">Current Password</label>
+              <label className="font-mono text-[10px] uppercase tracking-wider text-ivory/60 block mb-2">
+                Current Password
+              </label>
               <input
                 type="password"
                 required
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
-                placeholder="••••••••••••"
-                className="mt-1.5 w-full rounded-xl border border-surface-border bg-[#121212] px-4 py-2.5 text-xs text-ivory outline-none focus:border-gold transition-colors"
+                placeholder="Enter current password"
+                className="w-full border border-white/10 bg-[#141413] px-3.5 py-2.5 text-xs text-ivory placeholder-ivory/30 focus:border-gold focus:outline-none"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-ivory/80">New Password</label>
+              <label className="font-mono text-[10px] uppercase tracking-wider text-ivory/60 block mb-2">
+                New Password
+              </label>
               <input
                 type="password"
                 required
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                placeholder="••••••••••••"
-                className="mt-1.5 w-full rounded-xl border border-surface-border bg-[#121212] px-4 py-2.5 text-xs text-ivory outline-none focus:border-gold transition-colors"
+                placeholder="Minimum 8 characters"
+                className="w-full border border-white/10 bg-[#141413] px-3.5 py-2.5 text-xs text-ivory placeholder-ivory/30 focus:border-gold focus:outline-none"
               />
             </div>
 
             <button
               type="submit"
-              disabled={status === "saving"}
-              className="mt-6 w-full rounded-xl bg-gold px-4 py-3 text-xs font-bold uppercase tracking-wider text-near-black shadow-lg hover:bg-gold-light transition-all disabled:opacity-60"
+              disabled={status === "saving" || !currentPassword || !newPassword}
+              className="mt-6 flex w-full items-center justify-center gap-2 border border-gold bg-gold py-3 text-xs font-semibold uppercase tracking-[0.14em] text-near-black hover:bg-gold-light transition-colors disabled:opacity-40"
             >
-              {status === "saving" ? "Updating Security Credentials..." : "Update Password"}
+              <span>{status === "saving" ? "Updating..." : "Update Password"}</span>
+              <ArrowUpRight size={13} />
             </button>
           </form>
         </div>

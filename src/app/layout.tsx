@@ -1,25 +1,30 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import SmoothScrollProvider from "@/components/SmoothScrollProvider";
 import { siteConfig } from "@/data/siteConfig";
 import LocalBusinessSchema from "@/components/LocalBusinessSchema";
-import CustomCursor from "@/components/CustomCursor";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: "#080808",
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://nirabi-design-studio.vercel.app"),
   title: {
-    default: "NIRABI DESIGN STUDIO — Interior Architecture & Design",
+    default: "NIRABI DESIGN STUDIO — Interior Design & Turnkey Solutions in Chennai",
     template: "%s — NIRABI DESIGN STUDIO",
   },
   description: siteConfig.heroSupportingText,
   icons: {
     icon: [
-      { url: "/logo.png", type: "image/png" },
+      { url: "/favicon.ico" },
       { url: "/icon.png", type: "image/png" },
-      { url: "/favicon.ico", sizes: "any" },
     ],
-    shortcut: ["/logo.png"],
-    apple: [{ url: "/logo.png" }, { url: "/apple-touch-icon.png" }],
+    shortcut: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
   },
   openGraph: {
     title: "NIRABI DESIGN STUDIO",
@@ -33,10 +38,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className="dark">
       <head>
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" href="/icon.png" type="image/png" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <LocalBusinessSchema />
       </head>
-      <body className="font-body bg-near-black text-ivory antialiased selection:bg-gold selection:text-near-black">
-        <CustomCursor />
+      <body className="font-body bg-[#080808] text-ivory antialiased">
         <SmoothScrollProvider>
           {children}
         </SmoothScrollProvider>

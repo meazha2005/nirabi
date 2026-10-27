@@ -1,83 +1,78 @@
-import TextReveal from "@/components/animations/TextReveal";
-import { Compass, Layers, ShieldCheck } from "lucide-react";
+import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
 
 export default function Introduction() {
-  const pillars = [
-    {
-      num: "01",
-      title: "Spatial Purity",
-      desc: "Fluid proportions, uncluttered circulation paths, and the intentional choreography of natural daylight.",
-      icon: Compass,
-    },
-    {
-      num: "02",
-      title: "Material Honesty",
-      desc: "Authentic American oak, honed travertine, fluted glass, and hand-finished brushed brass surfaces that age gracefully.",
-      icon: Layers,
-    },
-    {
-      num: "03",
-      title: "Turnkey Precision",
-      desc: "Complete architectural ownership from 3D visual renderings and shop drawings to factory joinery and white-glove handover.",
-      icon: ShieldCheck,
-    },
-  ];
-
   return (
-    <section className="relative overflow-hidden bg-[#0A0A0A] py-24 sm:py-32 border-b border-surface-border">
-      {/* Subtle Background Watermark */}
-      <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 select-none opacity-[0.02]">
-        <span className="font-display text-[14rem] md:text-[22rem] font-bold text-white tracking-widest leading-none">
-          NIRABI
-        </span>
-      </div>
+    <section className="relative border-b border-white/10 bg-[#0A0A09] py-20 lg:py-28">
+      <div className="mx-auto max-w-7xl px-6 lg:px-10">
+        {/* Top Header Grid */}
+        <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
+          {/* Left Column */}
+          <div className="lg:col-span-6">
+            <span className="font-mono text-[11px] uppercase tracking-[0.25em] text-gold font-semibold">
+              Who We Are
+            </span>
+            <h2 className="mt-4 font-display text-3xl leading-snug text-ivory sm:text-4xl lg:text-5xl">
+              We create homes that feel comfortable, practical, and beautiful.
+              <span className="mt-2 block italic text-gold">
+                Simple designs built to last for years.
+              </span>
+            </h2>
+          </div>
 
-      <div className="relative z-10 mx-auto max-w-6xl px-6 lg:px-8">
-        {/* Editorial Manifesto Quote */}
-        <div className="mx-auto max-w-4xl text-center">
-          <TextReveal className="eyebrow text-gold">The Studio Manifesto</TextReveal>
-          
-          <TextReveal delay={0.1} as="p" className="mt-6 font-display text-2xl sm:text-3xl md:text-4xl lg:text-[2.75rem] leading-[1.25] text-ivory">
-            We sculpt environments that transcend fleeting decoration — crafting spaces of stillness, proportion, and quiet grandeur.
-          </TextReveal>
-
-          <TextReveal delay={0.2} as="p" className="mt-5 font-serif italic text-xl sm:text-2xl text-gold">
-            Interior architecture shaped around how you live, breathe, and gather.
-          </TextReveal>
+          {/* Right Column */}
+          <div className="flex flex-col justify-between space-y-6 text-sm leading-relaxed text-ivory/80 lg:col-span-6">
+            <p>
+              NIRABI DESIGN STUDIO is an interior design and turnkey execution company based in Madipakkam, Chennai. We help homeowners turn empty spaces into warm, modern, and functional homes.
+            </p>
+            <p>
+              Whether you are moving into a new apartment, building a villa, or remodeling your existing house, we make the process easy. Our team manages 3D drawings, carpentry, modular kitchen setup, false ceiling, and painting all under one roof.
+            </p>
+            <div className="pt-2">
+              <Link
+                href="/about"
+                className="group inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.15em] text-gold transition-colors hover:text-gold-light"
+              >
+                <span>Read More About Us &amp; Our Team</span>
+                <ArrowUpRight size={14} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              </Link>
+            </div>
+          </div>
         </div>
 
-        {/* 3 Pillars Grid */}
-        <div className="mt-20 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {pillars.map((pillar) => {
-            const Icon = pillar.icon;
-            return (
-              <div
-                key={pillar.num}
-                className="group relative overflow-hidden rounded-2xl border border-surface-border bg-surface-card p-8 transition-all duration-500 hover:border-gold/40 hover:bg-surface-elevated hover:-translate-y-1"
-              >
-                <div className="flex items-center justify-between pb-6 border-b border-surface-border">
-                  <span className="font-mono text-xs font-semibold text-gold tracking-widest">
-                    DISCIPLINE {pillar.num}
-                  </span>
-                  <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-gold/25 bg-gold/10 text-gold transition-transform duration-300 group-hover:scale-110">
-                    <Icon size={16} />
-                  </div>
-                </div>
+        {/* 4 Core Pillars Grid */}
+        <div className="mt-16 grid grid-cols-1 gap-px bg-white/10 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="bg-[#0D0D0C] p-8 transition-colors hover:bg-[#121211]">
+            <span className="font-mono text-xs text-gold/80 font-bold">01</span>
+            <h3 className="mt-4 font-display text-xl text-ivory">Smart Space Planning</h3>
+            <p className="mt-2 text-xs leading-relaxed text-ivory/70">
+              Arranging every room for great walking space, plenty of natural light, and smart storage.
+            </p>
+          </div>
 
-                <div className="mt-6">
-                  <h3 className="font-display text-xl font-semibold text-ivory transition-colors group-hover:text-gold">
-                    {pillar.title}
-                  </h3>
-                  <p className="mt-3 text-xs leading-relaxed text-ivory/65">
-                    {pillar.desc}
-                  </p>
-                </div>
+          <div className="bg-[#0D0D0C] p-8 transition-colors hover:bg-[#121211]">
+            <span className="font-mono text-xs text-gold/80 font-bold">02</span>
+            <h3 className="mt-4 font-display text-xl text-ivory">Quality Materials</h3>
+            <p className="mt-2 text-xs leading-relaxed text-ivory/70">
+              Using waterproof BWR plywood, quality teak, smooth laminates, and trusted German fittings.
+            </p>
+          </div>
 
-                {/* Subtle Hover Accent Line */}
-                <div className="absolute bottom-0 left-0 h-[2px] w-0 bg-gold transition-all duration-500 ease-out-expo group-hover:w-full" />
-              </div>
-            );
-          })}
+          <div className="bg-[#0D0D0C] p-8 transition-colors hover:bg-[#121211]">
+            <span className="font-mono text-xs text-gold/80 font-bold">03</span>
+            <h3 className="mt-4 font-display text-xl text-ivory">Clear Honest Pricing</h3>
+            <p className="mt-2 text-xs leading-relaxed text-ivory/70">
+              Clear, itemized estimates with no hidden charges so you know exactly what you are paying for.
+            </p>
+          </div>
+
+          <div className="bg-[#0D0D0C] p-8 transition-colors hover:bg-[#121211]">
+            <span className="font-mono text-xs text-gold/80 font-bold">04</span>
+            <h3 className="mt-4 font-display text-xl text-ivory">On-Time Handover</h3>
+            <p className="mt-2 text-xs leading-relaxed text-ivory/70">
+              Dedicated site supervisors checking daily progress to hand over your home right on schedule.
+            </p>
+          </div>
         </div>
       </div>
     </section>

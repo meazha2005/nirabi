@@ -1,23 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { query, TABLE_PREFIX, initTables } from "@/db/mysql";
-import { seedData } from "@/db/seed";
+import { query, TABLE_PREFIX } from "@/db/mysql";
 const { verifyAccessToken } = require("@/backend/security");
 
-let dbInitialized = false;
-async function ensureDb() {
-  if (!dbInitialized) {
-    try {
-      await initTables();
-      await seedData();
-      dbInitialized = true;
-    } catch (err) {
-      console.error("[Database Auto-Init Error]:", err);
-    }
-  }
-}
-
 async function verifyAdmin(req: NextRequest) {
-  await ensureDb();
   const authHeader = req.headers.get("authorization");
   if (!authHeader || !authHeader.startsWith("Bearer ")) return false;
   const token = authHeader.split(" ")[1];

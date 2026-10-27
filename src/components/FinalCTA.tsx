@@ -1,74 +1,68 @@
 "use client";
 
-import TextReveal from "@/components/animations/TextReveal";
+import Link from "next/link";
+import { ArrowUpRight, MessageCircle, Phone, Mail, MapPin } from "lucide-react";
 import { siteConfig } from "@/data/siteConfig";
-import { Sparkles, Phone, ArrowRight, MessageSquare } from "lucide-react";
 
 export default function FinalCTA() {
-  const openChat = () => {
-    window.dispatchEvent(new CustomEvent("nirabi:open-chat"));
-    window.dispatchEvent(new CustomEvent("yavi:open-chat"));
-  };
-
   return (
-    <section className="relative overflow-hidden bg-[#0A0A0A] py-28 lg:py-36 border-t border-surface-border">
-      {/* Background Architectural Imagery with Deep Vignette */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src="/images/cta/final-cta.jpg"
-        alt=""
-        aria-hidden="true"
-        className="absolute inset-0 h-full w-full object-cover opacity-20 filter contrast-125"
-      />
-      <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/70 to-[#0A0A0A]" />
+    <section className="relative border-b border-white/10 bg-[#080808] py-24 lg:py-32">
+      <div className="mx-auto max-w-7xl px-6 lg:px-10">
+        <div className="border border-white/10 bg-[#0B0B0A] p-8 sm:p-14 lg:p-20">
+          <div className="max-w-3xl">
+            <span className="font-mono text-[11px] uppercase tracking-[0.25em] text-gold font-semibold">
+              Start Your Project
+            </span>
+            <h2 className="mt-4 font-display text-3xl leading-tight text-ivory sm:text-5xl lg:text-6xl">
+              Ready to design your dream home?
+            </h2>
+            <p className="mt-6 max-w-xl text-sm leading-relaxed text-ivory/80 sm:text-base">
+              Talk to our team today for a free design consultation. Tell us about your house or flat, and we will give you customized 3D ideas and an honest, clear budget.
+            </p>
 
-      {/* Radial Gold Flare in Center */}
-      <div className="pointer-events-none absolute left-1/2 top-1/2 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gold/10 blur-[130px]" />
+            {/* Actions */}
+            <div className="mt-10 flex flex-wrap gap-4">
+              <Link
+                href="/contact"
+                className="group inline-flex items-center gap-2.5 border border-gold bg-gold px-7 py-3.5 text-xs font-semibold uppercase tracking-[0.14em] text-near-black transition-all hover:bg-gold-light"
+              >
+                <span>Book Free Consultation</span>
+                <ArrowUpRight size={14} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              </Link>
 
-      <div className="relative mx-auto max-w-4xl px-6 text-center">
-        <div className="inline-flex items-center gap-2 rounded-full border border-gold/30 bg-gold/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-gold mb-6">
-          <Sparkles size={14} />
-          <span>Begin Your Transformation</span>
-        </div>
+              <a
+                href={`https://wa.me/${siteConfig.contact.whatsapp}?text=Hello%20NIRABI%20Design%20Studio,%20I%20would%20like%20to%20discuss%20an%20interior%20design%20project.`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group inline-flex items-center gap-2.5 border border-white/20 bg-[#121211] px-7 py-3.5 text-xs font-semibold uppercase tracking-[0.14em] text-ivory transition-all hover:border-emerald-500 hover:text-emerald-400"
+              >
+                <MessageCircle size={15} className="text-emerald-400" />
+                <span>Chat on WhatsApp</span>
+              </a>
+            </div>
+          </div>
 
-        <h2 className="font-display text-4xl sm:text-5xl lg:text-6xl text-ivory tracking-tight leading-[1.15]">
-          Let us shape an interior that feels <span className="italic text-gold">uniquely yours</span>.
-        </h2>
-
-        <p className="mx-auto mt-6 max-w-xl text-base sm:text-lg text-ivory/70 leading-relaxed font-light">
-          From full villa interior architecture to tailored modular kitchens and workspace design in Chennai, our studio brings museum-grade refinement into daily life.
-        </p>
-
-        {/* Action Buttons */}
-        <div className="mt-10 flex flex-wrap justify-center items-center gap-4">
-          <a
-            href="/contact"
-            data-cursor="explore"
-            className="group inline-flex items-center gap-2.5 rounded-full bg-gold px-8 py-4 text-xs font-bold uppercase tracking-wider text-near-black transition-all duration-300 hover:bg-gold-light hover:shadow-[0_0_35px_rgba(242,223,181,0.5)] hover:-translate-y-0.5"
-          >
-            <span>{siteConfig.primaryCta}</span>
-            <ArrowRight size={15} className="transition-transform group-hover:translate-x-1" />
-          </a>
-
-          <button
-            onClick={openChat}
-            data-cursor="explore"
-            className="group inline-flex items-center gap-2.5 rounded-full border border-gold/40 bg-surface-card/80 px-8 py-4 text-xs font-bold uppercase tracking-wider text-gold backdrop-blur-md transition-all duration-300 hover:border-gold hover:bg-gold/15 hover:-translate-y-0.5"
-          >
-            <MessageSquare size={15} />
-            <span>Consult Design Concierge</span>
-          </button>
-        </div>
-
-        {/* Direct Studio Phone Pill */}
-        <div className="mt-8">
-          <a
-            href={`tel:${siteConfig.contact.phone}`}
-            className="inline-flex items-center gap-2 text-xs font-mono text-ivory/50 hover:text-gold transition-colors"
-          >
-            <Phone size={13} className="text-gold" />
-            <span>Studio Direct Line: {siteConfig.contact.phone}</span>
-          </a>
+          {/* Quick Studio Contact Strip */}
+          <div className="mt-16 grid grid-cols-1 gap-6 border-t border-white/10 pt-10 sm:grid-cols-3">
+            <a
+              href={`tel:${siteConfig.contact.phone}`}
+              className="flex items-center gap-3 text-xs text-ivory/80 transition-colors hover:text-gold"
+            >
+              <Phone size={15} className="text-gold shrink-0" />
+              <span>+91 95431 17399</span>
+            </a>
+            <a
+              href={`mailto:${siteConfig.contact.email}`}
+              className="flex items-center gap-3 text-xs text-ivory/80 transition-colors hover:text-gold truncate"
+            >
+              <Mail size={15} className="text-gold shrink-0" />
+              <span className="truncate">{siteConfig.contact.email}</span>
+            </a>
+            <div className="flex items-center gap-3 text-xs text-ivory/70">
+              <MapPin size={15} className="text-gold shrink-0" />
+              <span className="truncate">Madipakkam, Chennai 600091</span>
+            </div>
+          </div>
         </div>
       </div>
     </section>

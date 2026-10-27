@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { query, TABLE_PREFIX, initTables } from "@/db/mysql";
+import { query, TABLE_PREFIX } from "@/db/mysql";
 const { verifyAccessToken } = require("@/backend/security");
 
 export async function GET(req: NextRequest) {

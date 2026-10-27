@@ -1,36 +1,37 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600&family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Manrope:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  /* Deep Architectural Onyx Theme */
+  /* Architectural Deep Black Foundation */
   --near-black: #080808;
-  --surface-dark: #0F0F0F;
+  --surface-elevated: #111111;
   --surface-card: #141414;
-  --surface-elevated: #1A1A1A;
-  --surface-border: rgba(255, 255, 255, 0.07);
-  --surface-border-gold: rgba(242, 223, 181, 0.22);
-  --charcoal: #121212;
+  --surface-border: rgba(232, 212, 176, 0.14);
+  --border-subtle: rgba(255, 255, 255, 0.08);
 
-  /* Gold Palette extracted from NIRABI Logo */
-  --gold: #F2DFB5;
-  --gold-light: #FBF0D9;
-  --gold-dark: #CFA662;
-  --gold-muted: #8E7748;
+  /* NIRABI Champagne Sand Gold (exact logo harmonic palette) */
+  --gold: #E8D4B0;
+  --gold-light: #F7EFE1;
+  --gold-dark: #C5A56D;
+  --gold-muted: #9E8354;
 
-  /* Text & Surfaces */
-  --ivory: #FDFBF7;
+  /* Refined Typography Tones */
+  --ivory: #F5F3EF;
+  --text-muted: #A8A399;
+  --text-subtle: #706B62;
+
+  /* Legacy compatibility */
+  --charcoal: #111111;
   --cream: #141414;
-  --bronze: #F2DFB5;
-  --beige: #E2C892;
-  --wood: #CFA662;
+  --bronze: #E8D4B0;
+  --beige: #F7EFE1;
+  --wood: #C5A56D;
 
-  /* Editorial Typography Stack */
-  --font-display: 'Fraunces', 'Cormorant Garamond', Georgia, serif;
-  --font-serif: 'Cormorant Garamond', Georgia, serif;
-  --font-body: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body: 'Manrope', system-ui, -apple-system, sans-serif;
 
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -40,79 +41,86 @@
 }
 
 html {
-  scroll-behavior: auto;
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   background-color: var(--near-black);
   color-scheme: dark;
+  touch-action: manipulation;
 }
 
 body {
   background-color: var(--near-black);
   color: var(--ivory);
   font-family: var(--font-body);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
-  text-rendering: optimizeLegibility;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: auto;
+  overscroll-behavior-x: none;
 }
 
-/* Headings */
+/* Official Lenis integration for hardware-accelerated smooth scrolling */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+/* GPU composite layer isolation for fixed UI components */
+.gpu-layer {
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
 h1, h2, h3, h4, .font-display {
   font-family: var(--font-display);
-  font-weight: 500;
+  font-weight: 400;
   letter-spacing: -0.015em;
-  line-height: 1.08;
-}
-
-.font-serif {
-  font-family: var(--font-serif);
+  line-height: 1.1;
 }
 
 .eyebrow {
   font-family: var(--font-body);
   font-size: 0.6875rem;
-  letter-spacing: 0.28em;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   font-weight: 600;
+  color: var(--gold);
 }
 
-/* Glassmorphism & Luxury Panels */
-.glass-panel {
-  background: rgba(18, 18, 18, 0.65);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(242, 223, 181, 0.12);
+/* Subtle, accessible focus states */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 1.5px solid var(--gold);
+  outline-offset: 2px;
 }
 
-.glass-panel-subtle {
-  background: rgba(14, 14, 14, 0.5);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+::selection {
+  background: var(--gold);
+  color: var(--near-black);
 }
 
-.gold-gradient-text {
-  background: linear-gradient(135deg, #FFF6E5 0%, #F2DFB5 40%, #CFA662 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.gold-gradient-border {
-  position: relative;
-}
-.gold-gradient-border::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  padding: 1px;
-  background: linear-gradient(135deg, rgba(242, 223, 181, 0.4), transparent 60%);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
-}
-
-/* Custom Scrollbar */
+/* Refined custom scrollbar */
 ::-webkit-scrollbar {
   width: 5px;
   height: 5px;
@@ -121,50 +129,18 @@ h1, h2, h3, h4, .font-display {
   background: #080808;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(242, 223, 181, 0.22);
-  border-radius: 9999px;
+  background: rgba(232, 212, 176, 0.22);
+  border-radius: 2px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(242, 223, 181, 0.5);
+  background: rgba(232, 212, 176, 0.45);
 }
 
-/* Accessible focus states */
-a:focus-visible,
-button:focus-visible,
-input:focus-visible,
-textarea:focus-visible,
-select:focus-visible {
-  outline: 2px solid var(--gold);
-  outline-offset: 3px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-}
-
-/* Custom cursor */
-.has-custom-cursor {
-  cursor: none;
-}
-.has-custom-cursor a,
-.has-custom-cursor button {
-  cursor: none;
-}
-
-::selection {
-  background: #F2DFB5;
-  color: #080808;
-}
-
-@keyframes fadeInUp {
+/* Smooth message fade */
+@keyframes fadeInUpSubtle {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(6px);
   }
   to {
     opacity: 1;
@@ -172,21 +148,6 @@ select:focus-visible {
   }
 }
 
-@keyframes pulseGlow {
-  0%, 100% {
-    opacity: 0.4;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.8;
-    transform: scale(1.08);
-  }
-}
-
 .animate-message {
-  animation: fadeInUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.animate-glow {
-  animation: pulseGlow 4s ease-in-out infinite;
+  animation: fadeInUpSubtle 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }

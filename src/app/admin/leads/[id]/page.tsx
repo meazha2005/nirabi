@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import Link from "next/link";
 import { useRequireAdmin } from "@/lib/adminAuth";
 import { api } from "@/lib/api";
-import { ArrowLeft, User, Phone, Mail, MapPin, Building, Home, Ruler, Palette, DollarSign, Calendar, FileText, MessageSquare, Bot } from "lucide-react";
+import { ArrowLeft, Phone, Mail, MapPin, Building, Home, Ruler, Palette, DollarSign, Calendar, MessageSquare, Bot } from "lucide-react";
 
 type Lead = {
   id: string;
@@ -34,7 +34,6 @@ const STATUSES = ["Enquired", "Pending", "Confirmed", "Completed", "Reject"];
 export default function AdminLeadDetailPage() {
   const { token, checked } = useRequireAdmin();
   const params = useParams();
-  const router = useRouter();
   const leadId = params.id as string;
 
   const [lead, setLead] = useState<Lead | null>(null);
@@ -55,7 +54,7 @@ export default function AdminLeadDetailPage() {
     try {
       const updated = await api.updateLeadStatus(token, leadId, status);
       setLead(updated as Lead);
-    } catch (err) {
+    } catch {
       setLead(oldLead);
       alert("Failed to update status");
     } finally {
@@ -64,50 +63,49 @@ export default function AdminLeadDetailPage() {
   };
 
   if (!checked || !token) return null;
-  if (!lead) return <div className="px-6 py-12 text-center text-xs text-ivory/50">Retrieving lead telemetry…</div>;
+  if (!lead) return <div className="px-6 py-12 text-center text-xs text-ivory/50">Loading lead details...</div>;
 
   const specs = [
     { label: "Phone Number", value: lead.phone, icon: Phone },
     { label: "Email Address", value: lead.email, icon: Mail },
     { label: "Location", value: lead.location, icon: MapPin },
     { label: "Property Type", value: lead.property_type, icon: Home },
-    { label: "Project Category", value: lead.project_type, icon: Building },
-    { label: "Property Size", value: lead.property_size, icon: Ruler },
-    { label: "Design Preference", value: lead.design_style, icon: Palette },
-    { label: "Budget Range", value: lead.budget, icon: DollarSign },
-    { label: "Project Timeline", value: lead.timeline, icon: Calendar },
+    { label: "Project Scope", value: lead.project_type, icon: Building },
+    { label: "Floor Area", value: lead.property_size ? `${lead.property_size} sq.ft` : null, icon: Ruler },
+    { label: "Design Style", value: lead.design_style, icon: Palette },
+    { label: "Budget", value: lead.budget, icon: DollarSign },
+    { label: "Timeline", value: lead.timeline, icon: Calendar },
   ];
 
   return (
-    <div className="px-6 py-8 sm:px-10 space-y-6 max-w-7xl mx-auto">
+    <div className="mx-auto max-w-7xl px-6 py-8 sm:px-10 space-y-6">
       {/* Top Header Navigation */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-surface-border pb-6">
+      <div className="flex flex-col gap-4 border-b border-white/10 pb-6 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <Link
             href="/admin/leads"
-            className="inline-flex items-center gap-2 text-xs font-semibold text-gold hover:text-gold-light mb-2 transition-colors"
+            className="mb-2 inline-flex items-center gap-1.5 font-mono text-xs text-gold hover:text-gold-light transition-colors"
           >
-            <ArrowLeft size={14} /> Back to Leads Pipeline
+            <ArrowLeft size={13} />
+            <span>Back to Leads</span>
           </Link>
-          <div className="flex items-center gap-3">
-            <h1 className="font-display text-3xl font-semibold text-ivory">
-              {lead.name || "Unnamed Inquiry"}
-            </h1>
-          </div>
+          <h1 className="font-display text-3xl font-semibold text-ivory">
+            {lead.name || "Customer"}
+          </h1>
         </div>
 
         {/* Status Selector Bar */}
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs text-ivory/50 font-medium mr-1">Status:</span>
+        <div className="flex flex-wrap items-center gap-1.5">
+          <span className="mr-2 font-mono text-[10px] uppercase text-ivory/40">Status:</span>
           {STATUSES.map((s) => (
             <button
               key={s}
-              disabled={updating}
               onClick={() => updateStatus(s)}
-              className={`rounded-xl px-3.5 py-1.5 text-xs font-semibold transition-all ${
+              disabled={updating}
+              className={`border px-3 py-1 font-mono text-[11px] uppercase tracking-wider transition-colors ${
                 lead.lead_status === s
-                  ? "bg-gold text-near-black shadow-md"
-                  : "bg-surface-card border border-surface-border text-ivory/70 hover:border-gold/40 hover:text-ivory"
+                  ? "border-gold bg-gold text-near-black font-semibold"
+                  : "border-white/10 bg-[#121211] text-ivory/60 hover:text-ivory"
               }`}
             >
               {s}
@@ -116,98 +114,94 @@ export default function AdminLeadDetailPage() {
         </div>
       </div>
 
-      {/* Split Grid */}
-      <div className="grid gap-8 lg:grid-cols-2">
-        {/* Left Column: Client & Property Specification */}
-        <div className="rounded-2xl border border-surface-border bg-surface-card p-6 shadow-sm space-y-6">
-          <div className="flex items-center gap-2 border-b border-surface-border pb-4">
-            <User size={18} className="text-gold" />
-            <h2 className="font-display text-lg font-semibold text-ivory">Client Specifications</h2>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            {specs.map((item) => {
-              const Icon = item.icon;
-              return (
-                <div key={item.label} className="rounded-xl border border-surface-border bg-[#121212] p-3.5">
-                  <div className="flex items-center gap-2 text-gold text-[10px] font-semibold uppercase tracking-wider">
-                    <Icon size={13} className="text-gold" />
-                    {item.label}
+      <div className="grid gap-8 lg:grid-cols-12">
+        {/* Left Column: Details */}
+        <div className="space-y-6 lg:col-span-5">
+          <div className="border border-white/10 bg-[#0C0C0B] p-6">
+            <span className="font-mono text-[10px] uppercase tracking-wider text-gold font-medium">Customer Details</span>
+            <div className="mt-4 divide-y divide-white/5">
+              {specs.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <div key={item.label} className="py-3 flex items-start justify-between gap-4 text-xs">
+                    <span className="flex items-center gap-2 text-ivory/50 font-mono text-[11px]">
+                      <Icon size={13} className="text-gold shrink-0" />
+                      {item.label}
+                    </span>
+                    <span className="font-medium text-ivory text-right">
+                      {item.value || "—"}
+                    </span>
                   </div>
-                  <div className="mt-1 font-medium text-ivory text-xs break-all">
-                    {item.value || "—"}
-                  </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
 
           {lead.requirements && (
-            <div className="rounded-xl border border-surface-border bg-[#121212] p-4">
-              <div className="flex items-center gap-2 text-gold text-[10px] font-semibold uppercase tracking-wider mb-2">
-                <FileText size={13} className="text-gold" />
-                Additional Requirements & Notes
-              </div>
-              <p className="text-xs text-ivory/80 leading-relaxed">{lead.requirements}</p>
+            <div className="border border-white/10 bg-[#0C0C0B] p-6">
+              <span className="font-mono text-[10px] uppercase tracking-wider text-gold">Inquiry Narrative</span>
+              <p className="mt-3 text-xs leading-relaxed text-ivory/80 whitespace-pre-line">
+                {lead.requirements}
+              </p>
             </div>
           )}
         </div>
 
-        {/* Right Column: Chatbot Conversation History */}
-        <div className="rounded-2xl border border-surface-border bg-surface-card p-6 shadow-sm flex flex-col">
-          <div className="flex items-center justify-between border-b border-surface-border pb-4">
-            <div className="flex items-center gap-2">
-              <MessageSquare size={18} className="text-gold" />
-              <h2 className="font-display text-lg font-semibold text-ivory">Design Concierge Dialogue</h2>
+        {/* Right Column: Interactive Chat Concierge Transcripts */}
+        <div className="lg:col-span-7">
+          <div className="border border-white/10 bg-[#0C0C0B] p-6">
+            <div className="flex items-center justify-between border-b border-white/10 pb-4">
+              <span className="font-mono text-[10px] uppercase tracking-wider text-gold">Design Concierge Transcript</span>
+              <span className="font-mono text-[10px] text-ivory/40">
+                {conversations.length} Session{conversations.length === 1 ? "" : "s"}
+              </span>
             </div>
-            <span className="text-xs text-ivory/50 font-medium">
-              {conversations.length} session(s)
-            </span>
-          </div>
 
-          {conversations.length === 0 && (
-            <div className="flex-1 flex flex-col items-center justify-center py-16 text-center text-ivory/40 text-xs">
-              <Bot size={32} className="text-ivory/20 mb-2" />
-              No chatbot conversation transcript recorded for this lead.
-            </div>
-          )}
-
-          {conversations.map((c) => (
-            <div key={c.id} className="mt-4 flex-1 flex flex-col">
-              {c.summary && (
-                <div className="mb-4 rounded-xl border border-gold/30 bg-gold/10 p-3.5 text-xs text-ivory font-medium">
-                  <span className="font-bold text-gold uppercase tracking-wider text-[10px] block mb-1">
-                    AI Lead Synthesis
-                  </span>
-                  {c.summary}
-                </div>
-              )}
-
-              <div className="max-h-[420px] space-y-3 overflow-y-auto pr-2 flex-1">
-                {c.messages.map((m, i) => (
-                  <div
-                    key={i}
-                    className={`flex flex-col ${m.role === "user" ? "items-end" : "items-start"}`}
-                  >
-                    <div
-                      className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-xs leading-relaxed ${
-                        m.role === "user"
-                          ? "bg-gold text-near-black font-semibold rounded-br-none"
-                          : "bg-[#121212] border border-surface-border text-ivory rounded-bl-none"
-                      }`}
-                    >
-                      {m.content}
-                    </div>
-                    {m.created_at && (
-                      <span className="mt-1 text-[10px] text-ivory/40 px-1 font-mono">
-                        {new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                      </span>
+            {conversations.length === 0 ? (
+              <div className="py-12 text-center text-xs text-ivory/40">
+                This inquiry was submitted via direct contact form (no automated chat transcript recorded).
+              </div>
+            ) : (
+              <div className="mt-6 space-y-6">
+                {conversations.map((conv) => (
+                  <div key={conv.id} className="space-y-4">
+                    {conv.summary && (
+                      <div className="border border-gold/30 bg-gold/5 p-3 text-xs text-gold">
+                        <span className="font-mono uppercase text-[9px] block">Session Summary:</span>
+                        {conv.summary}
+                      </div>
                     )}
+                    <div className="space-y-3">
+                      {conv.messages.map((m, idx) => (
+                        <div
+                          key={idx}
+                          className={`flex flex-col ${m.role === "user" ? "items-end" : "items-start"}`}
+                        >
+                          <div
+                            className={`max-w-[85%] p-3 text-xs leading-relaxed ${
+                              m.role === "user"
+                                ? "bg-gold text-near-black font-medium border border-gold"
+                                : "bg-[#141413] text-ivory/90 border border-white/10"
+                            }`}
+                          >
+                            <span className="font-mono text-[9px] block uppercase mb-1 opacity-60">
+                              {m.role === "user" ? "Client" : "NIRABI Concierge"}
+                            </span>
+                            <span className="whitespace-pre-line">{m.content}</span>
+                          </div>
+                          {m.created_at && (
+                            <span className="mt-1 font-mono text-[9px] text-ivory/30 px-1">
+                              {new Date(m.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                            </span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 ))}
               </div>
-            </div>
-          ))}
+            )}
+          </div>
         </div>
       </div>
     </div>

@@ -1,24 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { query, TABLE_PREFIX, initTables } from "@/db/mysql";
-import { seedData } from "@/db/seed";
+import { query, TABLE_PREFIX } from "@/db/mysql";
 const { verifyPassword, createAccessToken } = require("@/backend/security");
-
-let dbInitialized = false;
-async function ensureDb() {
-  if (!dbInitialized) {
-    try {
-      await initTables();
-      await seedData();
-      dbInitialized = true;
-    } catch (err) {
-      console.error("[Database Auto-Init Error]:", err);
-    }
-  }
-}
 
 export async function POST(req: NextRequest) {
   try {
-    await ensureDb();
     const body = await req.json();
     const { email, password } = body || {};
 

@@ -1,33 +1,25 @@
 import type { Metadata } from "next";
 import ProjectGallery from "@/components/ProjectGallery";
 import FinalCTA from "@/components/FinalCTA";
-import { Compass } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Curated Projects — NIRABI DESIGN STUDIO",
-  description:
-    "Explore built works by NIRABI DESIGN STUDIO across luxury villas, urban apartments, bespoke kitchens, and commercial interiors in Chennai.",
+  title: "Our Projects — NIRABI DESIGN STUDIO",
+  description: "Explore completed interior design projects in Chennai by NIRABI DESIGN STUDIO, including villas, apartments, modular kitchens, and office fitouts.",
 };
 
 export default function ProjectsPage() {
   return (
     <>
-      {/* Editorial Projects Hero */}
-      <section className="relative overflow-hidden bg-[#080808] pt-40 pb-16 lg:pt-48 lg:pb-24 border-b border-surface-border">
-        <div className="pointer-events-none absolute left-1/2 top-0 h-[450px] w-[600px] -translate-x-1/2 rounded-full bg-gold/5 blur-[140px]" />
-
-        <div className="relative mx-auto max-w-5xl px-6 text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-gold/30 bg-gold/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-gold mb-6">
-            <Compass size={14} />
-            <span>Built Works & Commissions</span>
-          </div>
-
-          <h1 className="font-display text-4xl sm:text-5xl lg:text-7xl text-ivory tracking-tight leading-[1.1]">
-            A selection of spaces we&rsquo;ve <span className="italic text-gold">shaped</span>.
+      <section className="relative border-b border-white/10 bg-[#080808] pb-16 pt-36 lg:pb-24 lg:pt-44">
+        <div className="mx-auto max-w-7xl px-6 lg:px-10">
+          <span className="font-mono text-[11px] uppercase tracking-[0.25em] text-gold font-semibold">
+            Our Work · Completed Projects
+          </span>
+          <h1 className="mt-4 max-w-3xl font-display text-4xl text-ivory sm:text-5xl lg:text-6xl">
+            Explore our completed homes and offices across Chennai.
           </h1>
-
-          <p className="mx-auto mt-6 max-w-2xl text-base sm:text-lg text-ivory/70 leading-relaxed font-light">
-            Each project is an architectural study in natural light, authentic materials, and turnkey engineering tailored to our clients&rsquo; lifestyle.
+          <p className="mt-6 max-w-xl text-base leading-relaxed text-ivory/80">
+            Take a look at our recent interior design projects. Each project was custom-designed and executed to fit the client&rsquo;s personal taste, floor plan, and budget.
           </p>
         </div>
       </section>

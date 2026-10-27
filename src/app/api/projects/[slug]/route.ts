@@ -1,19 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { query, TABLE_PREFIX, initTables } from "@/db/mysql";
-import { seedData } from "@/db/seed";
-
-let dbInitialized = false;
-async function ensureDb() {
-  if (!dbInitialized) {
-    try {
-      await initTables();
-      await seedData();
-      dbInitialized = true;
-    } catch (err) {
-      console.error("[Database Auto-Init Error]:", err);
-    }
-  }
-}
+import { query, TABLE_PREFIX } from "@/db/mysql";
 
 function formatProject(p: any) {
   let gallery = [];
@@ -42,7 +28,6 @@ function formatProject(p: any) {
 }
 
 export async function GET(req: NextRequest, { params }: { params: { slug: string } }) {
-  await ensureDb();
   const { slug } = params;
   const projTable = `${TABLE_PREFIX}projects`;
   const projects: any = await query(`SELECT * FROM ${projTable} WHERE slug = ?`, [slug]);
